@@ -1,4 +1,4 @@
-FROM golang:1.24.1-bookworm AS dev
+FROM golang:1.24.1-bookworm AS builder
 
 COPY bashrc /root/.bashrc
 
@@ -19,6 +19,6 @@ RUN --mount=type=cache,target=/root/.cache/go-build CGO_ENABLED=0 GOOS=linux go 
 
 FROM scratch
 
-COPY --from=dev /usr/local/bin/worker /usr/local/bin/worker
+COPY --from=builder /usr/local/bin/worker /usr/local/bin/worker
 
 ENTRYPOINT ["/usr/local/bin/worker"]

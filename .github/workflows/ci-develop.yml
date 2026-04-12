@@ -1,0 +1,123 @@
+name: CI - Develop
+
+on:
+  push:
+    branches: [develop]
+  pull_request:
+    branches: [develop]
+
+env:
+  REGISTRY: docker.io
+
+jobs:
+  # ─────────────────────────────────────────────
+  # Vote Service (Java / Spring Boot)
+  # ─────────────────────────────────────────────
+  vote:
+    name: Vote Service
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java 22
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "22"
+          cache: maven
+
+      - name: Build and test
+        working-directory: vote
+        run: mvn clean verify
+
+      - name: Log in to Docker Hub
+        if: github.event_name == 'push'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
+        if: github.event_name == 'push'
+        uses: docker/build-push-action@v6
+        with:
+          context: vote
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/vote:dev
+
+  # ─────────────────────────────────────────────
+  # Worker Service (Go)
+  # ─────────────────────────────────────────────
+  worker:
+    name: Worker Service
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go 1.24
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+          cache-dependency-path: worker/go.sum
+
+      - name: Build
+        working-directory: worker
+        run: go build ./...
+
+      - name: Test
+        working-directory: worker
+        run: go test ./... -v
+
+      - name: Log in to Docker Hub
+        if: github.event_name == 'push'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
+        if: github.event_name == 'push'
+        uses: docker/build-push-action@v6
+        with:
+          context: worker
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/worker:dev
+
+  # ─────────────────────────────────────────────
+  # Result Service (Node.js)
+  # ─────────────────────────────────────────────
+  result:
+    name: Result Service
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: result/package-lock.json
+
+      - name: Install dependencies
+        working-directory: result
+        run: npm install
+
+      - name: Run tests
+        working-directory: result
+        run: npm test
+
+      - name: Log in to Docker Hub
+        if: github.event_name == 'push'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
+        if: github.event_name == 'push'
+        uses: docker/build-push-action@v6
+        with:
+          context: result
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/result:dev

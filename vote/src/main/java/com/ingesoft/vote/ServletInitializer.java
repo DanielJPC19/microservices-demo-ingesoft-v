@@ -1,4 +1,4 @@
-package com.okteto.vote;
+package com.ingesoft.vote;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;

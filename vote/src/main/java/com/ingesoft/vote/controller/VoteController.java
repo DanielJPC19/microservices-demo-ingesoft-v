@@ -1,4 +1,4 @@
-package com.okteto.vote.controller;
+package com.ingesoft.vote.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +63,6 @@ public class VoteController {
         model.addAttribute("optionA", v.getOptionA());
         model.addAttribute("optionB", v.getOptionB());
         model.addAttribute("hostname", v.getHostname());
-        // We pass the vote received in the post request
         model.addAttribute("vote", vote);
         if (StringUtils.isEmpty(voter)) {
             voter = UUID.randomUUID().toString();

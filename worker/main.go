@@ -16,29 +16,23 @@ import (
 )
 
 var (
-	brokerList        = kingpin.Flag("brokerList", "List of brokers to connect").Default("kafka:9092").Strings()
+	brokerList        = kingpin.Flag("brokerList", "List of brokers to connect").Default(getEnv("KAFKA_BROKERS", "kafka:9092")).Strings()
 	topic             = kingpin.Flag("topic", "Topic name").Default("votes").String()
 	messageCountStart = kingpin.Flag("messageCountStart", "Message counter start from:").Int()
 )
 
-const (
-	host     = "postgresql"
-	port     = 5432
-	user     = "okteto"
-	password = "okteto"
-	dbname   = "votes"
-)
+func getEnv(key, fallback string) string {
+	if value, ok := os.LookupEnv(key); ok {
+		return value
+	}
+	return fallback
+}
 
 func main() {
 	db := openDatabase()
 	defer db.Close()
 
 	pingDatabase(db)
-
-	dropTableStmt := `DROP TABLE IF EXISTS votes`
-	if _, err := db.Exec(dropTableStmt); err != nil {
-		log.Panic(err)
-	}
 
 	createTableStmt := `CREATE TABLE IF NOT EXISTS votes (id VARCHAR(255) NOT NULL UNIQUE, vote VARCHAR(255) NOT NULL)`
 	if _, err := db.Exec(createTableStmt); err != nil {
@@ -66,8 +60,8 @@ func main() {
 				fmt.Printf("Received message: user %s vote %s\n", string(msg.Key), string(msg.Value))
 
 				insertDynStmt := `insert into "votes"("id", "vote") values($1, $2) on conflict(id) do update set vote = $2`
-				if _, err := db.Exec(insertDynStmt, *messageCountStart, string(msg.Value)); err != nil {
-					log.Panic(err)
+				if _, err := db.Exec(insertDynStmt, string(msg.Key), string(msg.Value)); err != nil {
+					log.Println("DB write error:", err)
 				}
 			case <-signals:
 				fmt.Println("Interrupt is detected")
@@ -80,7 +74,14 @@ func main() {
 }
 
 func openDatabase() *sql.DB {
-	psqlconn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
+	host := getEnv("DB_HOST", "postgresql")
+	port := getEnv("DB_PORT", "5432")
+	user := getEnv("DB_USER", "appuser")
+	password := getEnv("DB_PASSWORD", "")
+	dbname := getEnv("DB_NAME", "votes")
+
+	psqlconn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+		host, port, user, password, dbname)
 	for {
 		db, err := sql.Open("postgres", psqlconn)
 		if err == nil {

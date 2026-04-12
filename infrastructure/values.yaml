@@ -5,8 +5,8 @@ postgresql:
     pullPolicy: IfNotPresent
   
   auth:
-    username: okteto
-    password: okteto
+    username: appuser
+    password: apppassword
     database: votes
   
   persistence:

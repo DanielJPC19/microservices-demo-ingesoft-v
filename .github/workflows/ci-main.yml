@@ -1,0 +1,147 @@
+name: CI - Main (Production)
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  # ─────────────────────────────────────────────
+  # Vote Service (Java / Spring Boot)
+  # ─────────────────────────────────────────────
+  vote:
+    name: Vote Service
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java 22
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "22"
+          cache: maven
+
+      - name: Build and test
+        working-directory: vote
+        run: mvn clean verify
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image (prod + versioned SHA)
+        uses: docker/build-push-action@v6
+        with:
+          context: vote
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/vote:prod
+            ${{ secrets.DOCKER_USERNAME }}/vote:${{ github.sha }}
+
+  # ─────────────────────────────────────────────
+  # Worker Service (Go)
+  # ─────────────────────────────────────────────
+  worker:
+    name: Worker Service
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go 1.24
+        uses: actions/setup-go@v5
+        with:
+          go-version: "1.24"
+          cache-dependency-path: worker/go.sum
+
+      - name: Build
+        working-directory: worker
+        run: go build ./...
+
+      - name: Test
+        working-directory: worker
+        run: go test ./... -v
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image (prod + versioned SHA)
+        uses: docker/build-push-action@v6
+        with:
+          context: worker
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/worker:prod
+            ${{ secrets.DOCKER_USERNAME }}/worker:${{ github.sha }}
+
+  # ─────────────────────────────────────────────
+  # Result Service (Node.js)
+  # ─────────────────────────────────────────────
+  result:
+    name: Result Service
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: result/package-lock.json
+
+      - name: Install dependencies
+        working-directory: result
+        run: npm install
+
+      - name: Run tests
+        working-directory: result
+        run: npm test
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image (prod + versioned SHA)
+        uses: docker/build-push-action@v6
+        with:
+          context: result
+          push: true
+          tags: |
+            ${{ secrets.DOCKER_USERNAME }}/result:prod
+            ${{ secrets.DOCKER_USERNAME }}/result:${{ github.sha }}
+
+  # ─────────────────────────────────────────────
+  # Trigger Infrastructure Repository (CD)
+  # Simulates cross-repo dispatch to the infra repo.
+  # In a real two-repo setup this would call the
+  # GitHub API against the infra repo. Here we
+  # dispatch within the same repo to cd-infra.yml.
+  # ─────────────────────────────────────────────
+  trigger-cd:
+    name: Trigger CD Pipeline
+    runs-on: ubuntu-latest
+    needs: [vote, worker, result]
+    steps:
+      - name: Dispatch CD workflow
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'cd-infra.yml',
+              ref: 'main',
+              inputs: {
+                image_tag: '${{ github.sha }}',
+                environment: 'prod'
+              }
+            });
+            console.log('CD workflow dispatched for SHA: ${{ github.sha }}');
