@@ -20,8 +20,14 @@ io.sockets.on('connection', function (socket) {
   });
 });
 
+var dbHost = process.env.DB_HOST || 'postgresql';
+var dbPort = process.env.DB_PORT || '5432';
+var dbUser = process.env.DB_USER || 'appuser';
+var dbPassword = process.env.DB_PASSWORD || '';
+var dbName = process.env.DB_NAME || 'votes';
+
 var pool = new pg.Pool({
-  connectionString: 'postgres://okteto:okteto@postgresql/votes',
+  connectionString: `postgres://${dbUser}:${dbPassword}@${dbHost}:${dbPort}/${dbName}`,
 });
 
 async.retry(
@@ -92,7 +98,11 @@ app.get('/', function (req, res) {
   res.sendFile(path.resolve(__dirname + '/views/index.html'));
 });
 
-server.listen(port, function () {
-  var port = server.address().port;
-  console.log('App running on port ' + port);
-});
+module.exports = { app, collectVotesFromResult };
+
+if (require.main === module) {
+  server.listen(port, function () {
+    var port = server.address().port;
+    console.log('App running on port ' + port);
+  });
+}

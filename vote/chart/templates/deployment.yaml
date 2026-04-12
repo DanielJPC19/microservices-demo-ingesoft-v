@@ -20,3 +20,13 @@ spec:
         ports:
         - containerPort: 8080
           name: vote
+        env:
+        - name: KAFKA_BOOTSTRAP_SERVERS
+          value: {{ .Values.kafkaBootstrapServers | quote }}
+        resources:
+          limits:
+            cpu: {{ .Values.resources.limits.cpu | quote }}
+            memory: {{ .Values.resources.limits.memory | quote }}
+          requests:
+            cpu: {{ .Values.resources.requests.cpu | quote }}
+            memory: {{ .Values.resources.requests.memory | quote }}

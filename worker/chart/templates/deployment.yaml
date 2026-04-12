@@ -17,3 +17,26 @@ spec:
       containers:
       - image: {{ .Values.image }}
         name: worker
+        env:
+        - name: DB_HOST
+          value: {{ .Values.db.host | quote }}
+        - name: DB_PORT
+          value: {{ .Values.db.port | quote }}
+        - name: DB_USER
+          value: {{ .Values.db.user | quote }}
+        - name: DB_NAME
+          value: {{ .Values.db.name | quote }}
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: password
+        - name: KAFKA_BROKERS
+          value: {{ .Values.kafka.brokers | quote }}
+        resources:
+          limits:
+            cpu: {{ .Values.resources.limits.cpu | quote }}
+            memory: {{ .Values.resources.limits.memory | quote }}
+          requests:
+            cpu: {{ .Values.resources.requests.cpu | quote }}
+            memory: {{ .Values.resources.requests.memory | quote }}

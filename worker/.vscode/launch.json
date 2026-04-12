@@ -2,7 +2,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Connect to okteto",
+            "name": "Connect to remote debugger",
             "type": "go",
             "request": "attach",
             "mode": "remote",

@@ -1,4 +1,4 @@
-module github.com/okteto/microservicees-demo/worker
+module github.com/ingesoft/microservices-demo/worker
 
 go 1.24.1
 

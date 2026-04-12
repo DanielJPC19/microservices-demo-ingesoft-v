@@ -1,6 +1,20 @@
-# Default values for worker.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
 replicaCount: 1
-image: okteto.dev/worker
+
+image: your-dockerhub-user/worker:prod
+
+db:
+  host: postgresql
+  port: "5432"
+  user: appuser
+  name: votes
+
+kafka:
+  brokers: kafka:9092
+
+resources:
+  limits:
+    cpu: "250m"
+    memory: "128Mi"
+  requests:
+    cpu: "50m"
+    memory: "64Mi"

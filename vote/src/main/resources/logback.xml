@@ -6,7 +6,7 @@
         </encoder>
     </appender>
 
-    <logger name="com.okteto.vote.*" additivity="false">
+    <logger name="com.ingesoft.vote.*" additivity="false">
         <level value="INFO"/>
         <appender-ref ref="STDOUT"/>
     </logger>
