@@ -123,24 +123,24 @@ jobs:
 
   # ─────────────────────────────────────────────
   # Trigger Infrastructure Repository (CD)
-  # Simulates cross-repo dispatch to the infra repo.
-  # In a real two-repo setup this would call the
-  # GitHub API against the infra repo. Here we
-  # dispatch within the same repo to cd-infra.yml.
+  # Dispatches to the separate infra repo via
+  # workflow_dispatch. Requires INFRA_DISPATCH_TOKEN
+  # secret: a GitHub PAT with repo scope on the
+  # infra repo (GITHUB_TOKEN cannot cross repos).
   # ─────────────────────────────────────────────
   trigger-cd:
     name: Trigger CD Pipeline
     runs-on: ubuntu-latest
     needs: [vote, worker, result]
     steps:
-      - name: Dispatch CD workflow
+      - name: Dispatch CD workflow to infra repo
         uses: actions/github-script@v7
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          github-token: ${{ secrets.INFRA_DISPATCH_TOKEN }}
           script: |
             await github.rest.actions.createWorkflowDispatch({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
+              owner: 'DanielJPC19',
+              repo: 'microservices-demo-ingesoft-v-ops',
               workflow_id: 'cd-infra.yml',
               ref: 'main',
               inputs: {
