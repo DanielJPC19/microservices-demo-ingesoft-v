@@ -1,0 +1,725 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Microservices Demo — Voting App</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --blue:   #3b82f6;
+    --green:  #10b981;
+    --purple: #a855f7;
+    --amber:  #f59e0b;
+    --red:    #ef4444;
+    --cyan:   #06b6d4;
+    --bg:     #0f172a;
+    --bg2:    #1e293b;
+    --bg3:    #334155;
+    --text:   #f1f5f9;
+    --muted:  #94a3b8;
+  }
+
+  html, body { width: 100%; height: 100%; background: var(--bg); font-family: 'Segoe UI', system-ui, sans-serif; color: var(--text); overflow: hidden; }
+
+  /* ── Slides ── */
+  .deck { width: 100%; height: 100%; position: relative; }
+
+  .slide {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    padding: 48px 64px;
+    opacity: 0; pointer-events: none;
+    transition: opacity .35s ease;
+  }
+  .slide.active { opacity: 1; pointer-events: all; }
+
+  /* ── Navigation ── */
+  .nav {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    display: flex; align-items: center; gap: 16px; z-index: 100;
+  }
+  .nav button {
+    background: var(--bg3); border: 1px solid #475569; color: var(--text);
+    padding: 8px 20px; border-radius: 8px; cursor: pointer; font-size: 14px;
+    transition: background .2s;
+  }
+  .nav button:hover { background: #475569; }
+  .nav button:disabled { opacity: .3; cursor: default; }
+  .counter { font-size: 13px; color: var(--muted); min-width: 56px; text-align: center; }
+
+  .progress {
+    position: fixed; top: 0; left: 0; height: 3px;
+    background: linear-gradient(90deg, var(--blue), var(--purple));
+    transition: width .35s ease; z-index: 100;
+  }
+
+  /* ── Slide number badge ── */
+  .slide-num {
+    position: absolute; top: 20px; right: 28px;
+    font-size: 12px; color: var(--muted);
+  }
+
+  /* ── Timer ── */
+  .timer {
+    position: fixed; top: 16px; left: 20px;
+    font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums;
+    z-index: 100;
+  }
+  .timer.warn { color: var(--amber); }
+  .timer.over { color: var(--red); }
+
+  /* ── Typography ── */
+  h1 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; line-height: 1.15; }
+  h2 { font-size: clamp(1.4rem, 2.5vw, 2rem); font-weight: 700; margin-bottom: 28px; }
+  h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 8px; }
+  p, li { font-size: clamp(.85rem, 1.4vw, 1rem); line-height: 1.65; color: var(--muted); }
+  strong { color: var(--text); }
+
+  .tag {
+    display: inline-block; font-size: .72rem; font-weight: 700; letter-spacing: .04em;
+    padding: 3px 10px; border-radius: 20px; text-transform: uppercase;
+  }
+  .tag.blue   { background: #1d4ed820; color: var(--blue);   border: 1px solid #1d4ed840; }
+  .tag.green  { background: #06543020; color: var(--green);  border: 1px solid #06543040; }
+  .tag.purple { background: #6b21a820; color: var(--purple); border: 1px solid #6b21a840; }
+  .tag.amber  { background: #92400e20; color: var(--amber);  border: 1px solid #92400e40; }
+  .tag.red    { background: #7f1d1d20; color: var(--red);    border: 1px solid #7f1d1d40; }
+  .tag.cyan   { background: #16425320; color: var(--cyan);   border: 1px solid #16425340; }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--bg2); border: 1px solid #334155;
+    border-radius: 12px; padding: 20px 24px;
+  }
+  .card.blue   { border-color: #1d4ed860; }
+  .card.green  { border-color: #06543060; }
+  .card.purple { border-color: #6b21a860; }
+  .card.amber  { border-color: #92400e60; }
+  .card.red    { border-color: #7f1d1d60; }
+  .card.cyan   { border-color: #16425360; }
+
+  /* ── Grid helpers ── */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; width: 100%; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 14px; width: 100%; }
+
+  /* ── Cover ── */
+  .cover { text-align: center; }
+  .cover .logo { font-size: 4rem; margin-bottom: 16px; }
+  .cover h1 { background: linear-gradient(135deg, var(--blue), var(--purple)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+  .cover .sub { font-size: 1.1rem; color: var(--muted); margin-top: 12px; }
+  .cover .meta { margin-top: 36px; display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+
+  /* ── Flow diagram ── */
+  .flow { display: flex; align-items: center; gap: 0; width: 100%; }
+  .flow-node {
+    flex: 1; text-align: center; background: var(--bg2);
+    border: 1px solid #334155; border-radius: 10px; padding: 14px 10px;
+    font-size: .82rem;
+  }
+  .flow-node .icon { font-size: 1.6rem; display: block; margin-bottom: 6px; }
+  .flow-node .label { font-weight: 700; font-size: .85rem; }
+  .flow-node .sub { color: var(--muted); font-size: .72rem; margin-top: 3px; }
+  .flow-arrow { flex: 0 0 28px; text-align: center; color: var(--muted); font-size: 1.1rem; }
+
+  /* ── Pipeline steps ── */
+  .steps { display: flex; flex-direction: column; gap: 10px; width: 100%; }
+  .step { display: flex; align-items: flex-start; gap: 14px; }
+  .step-num {
+    flex: 0 0 26px; height: 26px; border-radius: 50%;
+    background: var(--blue); color: #fff; font-size: .78rem; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; margin-top: 2px;
+  }
+
+  /* ── Error table ── */
+  table { width: 100%; border-collapse: collapse; font-size: .82rem; }
+  th { text-align: left; color: var(--muted); font-weight: 600; padding: 8px 10px; border-bottom: 1px solid #334155; }
+  td { padding: 8px 10px; border-bottom: 1px solid #1e293b; vertical-align: top; }
+  tr:last-child td { border-bottom: none; }
+
+  /* ── Title bar ── */
+  .title-bar {
+    width: 100%; margin-bottom: 28px;
+    display: flex; align-items: center; gap: 14px;
+  }
+  .title-bar h2 { margin-bottom: 0; }
+  .title-bar .accent { flex: 1; height: 2px; background: linear-gradient(90deg, var(--blue) 0%, transparent 100%); }
+
+  ul { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  ul li::before { content: "›"; color: var(--blue); font-weight: 700; margin-right: 8px; }
+
+  .highlight { color: var(--blue); }
+  .highlight.green { color: var(--green); }
+  .highlight.purple { color: var(--purple); }
+  .highlight.amber { color: var(--amber); }
+
+  .centered { text-align: center; }
+  .w-full { width: 100%; }
+
+  /* ── Keyboard hint ── */
+  .hint { position: fixed; bottom: 68px; right: 24px; font-size: 11px; color: #475569; }
+</style>
+</head>
+<body>
+
+<div class="progress" id="progress"></div>
+<div class="timer" id="timer">0:00 / 8:00</div>
+<div class="hint">← → o click para navegar</div>
+
+<div class="deck" id="deck">
+
+  <!-- ══════════════════════════════════════════════
+       SLIDE 1 — PORTADA
+  ══════════════════════════════════════════════ -->
+  <div class="slide active cover">
+    <div class="logo">🗳️</div>
+    <h1>Microservices Demo<br/>Voting App</h1>
+    <p class="sub">CI/CD &amp; DevOps en Google Cloud Platform</p>
+    <div class="meta">
+      <span class="tag blue">Ingeniería de Software V</span>
+      <span class="tag green">GKE · Terraform · GitHub Actions</span>
+      <span class="tag purple">Java · Go · Node.js · Kafka · PostgreSQL</span>
+    </div>
+    <p style="margin-top:40px; font-size:.85rem; color:#475569">Abril 2026 — Daniel Jose</p>
+    <div class="slide-num">1 / 9</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SLIDE 2 — QUÉ CONSTRUIMOS
+  ══════════════════════════════════════════════ -->
+  <div class="slide">
+    <div class="title-bar">
+      <h2>¿Qué construimos?</h2>
+      <div class="accent"></div>
+    </div>
+
+    <div class="grid-2" style="gap:28px; align-items:start;">
+      <div>
+        <p style="margin-bottom:16px;">Sistema de votación en tiempo real con arquitectura de <strong>microservicios polyglot</strong>, despliegado en Kubernetes sobre GCP.</p>
+        <ul>
+          <li><strong>Vote Service</strong> — Java / Spring Boot · recibe votos</li>
+          <li><strong>Worker Service</strong> — Go · procesa y persiste</li>
+          <li><strong>Result Service</strong> — Node.js · muestra resultados live</li>
+          <li><strong>Kafka</strong> — broker de mensajes (KRaft)</li>
+          <li><strong>PostgreSQL</strong> — base de datos de resultados</li>
+        </ul>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:14px;">
+        <div class="card blue">
+          <h3>Patrón central: <span class="highlight">CQRS</span></h3>
+          <p>Ruta de escritura (Command) completamente separada de la ruta de lectura (Query)</p>
+        </div>
+        <div class="card green">
+          <h3>Estrategia DevOps: <span class="highlight green">Two-Repo</span></h3>
+          <p>Repositorio de <strong>desarrollo</strong> (CI) separado del repositorio de <strong>operaciones</strong> (CD + Terraform)</p>
+        </div>
+      </div>
+    </div>
+    <div class="slide-num">2 / 9</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SLIDE 3 — ARQUITECTURA CQRS
+  ══════════════════════════════════════════════ -->
+  <div class="slide">
+    <div class="title-bar">
+      <h2>Arquitectura CQRS</h2>
+      <div class="accent"></div>
+    </div>
+
+    <div style="width:100%; margin-bottom:20px;">
+      <p style="margin-bottom:6px;"><span class="tag blue">Write Path — Command</span></p>
+      <div class="flow">
+        <div class="flow-node" style="border-color:#1d4ed860;">
+          <span class="icon">👤</span>
+          <span class="label">Usuario</span>
+          <span class="sub">HTTP POST /vote</span>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="border-color:#1d4ed860;">
+          <span class="icon">☕</span>
+          <span class="label">Vote Service</span>
+          <span class="sub">Java · Spring Boot</span>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="border-color:#d97706;">
+          <span class="icon">📨</span>
+          <span class="label">Kafka</span>
+          <span class="sub">topic: votes</span>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="border-color:#0ea5e9;">
+          <span class="icon">⚙️</span>
+          <span class="label">Worker</span>
+          <span class="sub">Go · consumer</span>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="border-color:#22c55e;">
+          <span class="icon">🐘</span>
+          <span class="label">PostgreSQL</span>
+          <span class="sub">INSERT / UPSERT</span>
+        </div>
+      </div>
+    </div>
+
+    <div style="width:100%;">
+      <p style="margin-bottom:6px;"><span class="tag green">Read Path — Query</span></p>
+      <div class="flow">
+        <div class="flow-node" style="border-color:#22c55e;">
+          <span class="icon">🐘</span>
+          <span class="label">PostgreSQL</span>
+          <span class="sub">SELECT COUNT</span>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="border-color:#a855f7;">
+          <span class="icon">📊</span>
+          <span class="label">Result Service</span>
+          <span class="sub">Node.js · polling 1s</span>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="border-color:#a855f7;">
+          <span class="icon">👤</span>
+          <span class="label">Usuario</span>
+          <span class="sub">Socket.io live</span>
+        </div>
+        <div style="flex:3;"></div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:18px; width:100%; background:#1e293b80;">
+      <p>Los dos servicios de cara al usuario (<strong>Vote</strong> y <strong>Result</strong>) exponen IPs externas vía <strong>LoadBalancer</strong>. El Worker no tiene puerto externo. Las credenciales de BD viajan como <strong>Kubernetes Secret</strong>.</p>
+    </div>
+
+    <div class="slide-num">3 / 9</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SLIDE 4 — PATRONES DE NUBE
+  ══════════════════════════════════════════════ -->
+  <div class="slide">
+    <div class="title-bar">
+      <h2>Patrones de Nube Implementados</h2>
+      <div class="accent"></div>
+    </div>
+
+    <div class="grid-2" style="gap:16px; width:100%;">
+
+      <div class="card amber">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <span style="font-size:1.6rem;">⚡</span>
+          <h3 style="margin:0;">Rate Limiter</h3>
+          <span class="tag amber" style="margin-left:auto;">Vote Service</span>
+        </div>
+        <p>Máximo <strong>5 requests/segundo</strong> por instancia via <strong>Resilience4j</strong>. Si se supera, respuesta inmediata con mensaje de error sin lanzar excepción.</p>
+      </div>
+
+      <div class="card blue">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <span style="font-size:1.6rem;">🔄</span>
+          <h3 style="margin:0;">Retry + Backoff</h3>
+          <span class="tag blue" style="margin-left:auto;">Worker Service</span>
+        </div>
+        <p>Exponential backoff con <strong>cenkalti/backoff/v4</strong> en conexión a PostgreSQL y Kafka (500ms → 30s). En escrituras: 3 reintentos con intervalo de 1s.</p>
+      </div>
+
+      <div class="card red">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <span style="font-size:1.6rem;">🔌</span>
+          <h3 style="margin:0;">Circuit Breaker</h3>
+          <span class="tag red" style="margin-left:auto;">Kafka</span>
+        </div>
+        <p>Kafka actúa como <strong>buffer asíncrono</strong>: si el Worker cae, los votos se acumulan en el topic sin que Vote falle. Rompe la cadena de fallos en cascada.</p>
+      </div>
+
+      <div class="card green">
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+          <span style="font-size:1.6rem;">🧱</span>
+          <h3 style="margin:0;">Bulkhead</h3>
+          <span class="tag green" style="margin-left:auto;">GKE Pods</span>
+        </div>
+        <p>Cada microservicio corre en su propio <strong>pod aislado</strong> con límites de CPU y memoria. Un pod saturado no afecta a los demás.</p>
+      </div>
+
+    </div>
+    <div class="slide-num">4 / 9</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SLIDE 5 — BRANCHING
+  ══════════════════════════════════════════════ -->
+  <div class="slide">
+    <div class="title-bar">
+      <h2>Estrategia de Branching — Two-Repo</h2>
+      <div class="accent"></div>
+    </div>
+
+    <div class="grid-2" style="gap:24px; align-items:start; width:100%;">
+
+      <div>
+        <p style="margin-bottom:12px;"><span class="tag blue">Repo de Desarrollo — Git Flow</span></p>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <div class="card" style="border-color:#eab30840; display:flex; align-items:center; gap:12px;">
+            <code style="color:#eab308; font-size:.85rem;">feature/*</code>
+            <p style="margin:0;">Desarrollo local, sin CI automático</p>
+          </div>
+          <div style="text-align:center; color:#475569; font-size:.9rem;">↓ PR merge</div>
+          <div class="card blue" style="display:flex; align-items:center; gap:12px;">
+            <code style="color:var(--blue); font-size:.85rem;">develop</code>
+            <p style="margin:0;">CI: unit tests · tag <strong>:develop-sha</strong></p>
+          </div>
+          <div style="text-align:center; color:#475569; font-size:.9rem;">↓ branch off</div>
+          <div class="card green" style="display:flex; align-items:center; gap:12px;">
+            <code style="color:var(--green); font-size:.85rem;">release/*</code>
+            <p style="margin:0;">CI: integration tests · tag <strong>:staging</strong> → CD staging</p>
+          </div>
+          <div style="text-align:center; color:#475569; font-size:.9rem;">↓ PR merge</div>
+          <div class="card purple" style="display:flex; align-items:center; gap:12px;">
+            <code style="color:var(--purple); font-size:.85rem;">main</code>
+            <p style="margin:0;">CI: build · tag <strong>:prod</strong> → CD prod (aprobación manual)</p>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <p style="margin-bottom:12px;"><span class="tag amber">Repo de Operaciones — Trunk-Based</span></p>
+        <div class="card amber" style="margin-bottom:12px;">
+          <h3>Solo una rama: <code style="color:var(--amber);">main</code></h3>
+          <p>Toda la infra en un único branch. Cambios pequeños y frecuentes. Sin feature branches.</p>
+        </div>
+        <div class="card" style="margin-bottom:10px;">
+          <h3>cd-infra.yml</h3>
+          <p>Disparado vía <strong>workflow_dispatch</strong> desde el repo de dev. Recibe <code>environment</code> e <code>image_tag</code> como inputs.</p>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-top:4px;">
+          <div class="card green" style="padding:12px; text-align:center;">
+            <div style="font-size:1.2rem;">🔵</div>
+            <strong>Staging</strong>
+            <p>2 nodos · auto</p>
+          </div>
+          <div class="card purple" style="padding:12px; text-align:center;">
+            <div style="font-size:1.2rem;">🟣</div>
+            <strong>Prod</strong>
+            <p>3 nodos · aprobación</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="slide-num">5 / 9</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SLIDE 6 — PIPELINES CI
+  ══════════════════════════════════════════════ -->
+  <div class="slide">
+    <div class="title-bar">
+      <h2>Pipelines de CI — GitHub Actions</h2>
+      <div class="accent"></div>
+    </div>
+
+    <div class="grid-3" style="width:100%; align-items:start;">
+
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div style="text-align:center; margin-bottom:4px;">
+          <span class="tag blue">ci-develop.yml</span>
+          <p style="font-size:.75rem; margin-top:4px;">on: push develop</p>
+        </div>
+        <div class="card" style="padding:14px;">
+          <div class="step"><div class="step-num">1</div><p>Checkout</p></div>
+        </div>
+        <div class="card" style="padding:14px;">
+          <div class="step"><div class="step-num">2</div><p>Unit tests (Java, Go, Node)</p></div>
+        </div>
+        <div class="card" style="padding:14px;">
+          <div class="step"><div class="step-num">3</div><p>Docker build (3 imágenes)</p></div>
+        </div>
+        <div class="card blue" style="padding:14px;">
+          <div class="step"><div class="step-num">4</div><p>Push <strong>:develop-{sha}</strong> a Docker Hub</p></div>
+        </div>
+        <div class="card" style="padding:14px; opacity:.5;">
+          <p style="font-size:.78rem;">❌ Sin trigger CD</p>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div style="text-align:center; margin-bottom:4px;">
+          <span class="tag green">ci-release.yml</span>
+          <p style="font-size:.75rem; margin-top:4px;">on: push release/*</p>
+        </div>
+        <div class="card" style="padding:14px;">
+          <div class="step"><div class="step-num">1</div><p>Checkout</p></div>
+        </div>
+        <div class="card" style="padding:14px;">
+          <div class="step"><div class="step-num">2</div><p><strong>Integration tests</strong> (Kafka + DB reales)</p></div>
+        </div>
+        <div class="card" style="padding:14px;">
+          <div class="step"><div class="step-num">3</div><p>Docker build (3 imágenes)</p></div>
+        </div>
+        <div class="card green" style="padding:14px;">
+          <div class="step"><div class="step-num">4</div><p>Push <strong>:staging</strong> a Docker Hub</p></div>
+        </div>
+        <div class="card green" style="padding:14px;">
+          <div class="step"><div class="step-num" style="background:var(--green);">5</div><p>workflow_dispatch → CD staging</p></div>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div style="text-align:center; margin-bottom:4px;">
+          <span class="tag purple">ci-main.yml</span>
+          <p style="font-size:.75rem; margin-top:4px;">on: push main</p>
+        </div>
+        <div class="card" style="padding:14px;">
+          <div class="step"><div class="step-num">1</div><p>Checkout</p></div>
+        </div>
+        <div class="card" style="padding:14px;">
+          <div class="step"><div class="step-num">2</div><p>Build + tests</p></div>
+        </div>
+        <div class="card" style="padding:14px;">
+          <div class="step"><div class="step-num">3</div><p>Docker build (3 imágenes)</p></div>
+        </div>
+        <div class="card purple" style="padding:14px;">
+          <div class="step"><div class="step-num">4</div><p>Push <strong>:prod</strong> a Docker Hub</p></div>
+        </div>
+        <div class="card purple" style="padding:14px;">
+          <div class="step"><div class="step-num" style="background:var(--purple);">5</div><p>workflow_dispatch → CD prod</p></div>
+        </div>
+      </div>
+
+    </div>
+    <div class="slide-num">6 / 9</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SLIDE 7 — CD + INFRA GCP
+  ══════════════════════════════════════════════ -->
+  <div class="slide">
+    <div class="title-bar">
+      <h2>CD + Infraestructura en GCP</h2>
+      <div class="accent"></div>
+    </div>
+
+    <div class="grid-2" style="gap:24px; align-items:start; width:100%;">
+
+      <div>
+        <p style="margin-bottom:12px; font-size:.88rem; color:var(--muted);">cd-infra.yml — ops repo</p>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <div class="card" style="padding:12px; display:flex; align-items:center; gap:10px;">
+            <span>🔐</span><p><strong>WIF Auth</strong> — OIDC, sin JSON keys</p>
+          </div>
+          <div class="card" style="padding:12px; display:flex; align-items:center; gap:10px;">
+            <span>🏗️</span><p><strong>Terraform apply</strong> — crea/actualiza GKE cluster</p>
+          </div>
+          <div class="card" style="padding:12px; display:flex; align-items:center; gap:10px;">
+            <span>🔑</span><p><code>gcloud get-credentials</code> — kubeconfig</p>
+          </div>
+          <div class="card" style="padding:12px; display:flex; align-items:center; gap:10px;">
+            <span>📦</span><p><strong>kubectl apply</strong> — secret, PostgreSQL, Kafka</p>
+          </div>
+          <div class="card" style="padding:12px; display:flex; align-items:center; gap:10px;">
+            <span>🚀</span><p><strong>kubectl apply</strong> — vote, worker, result</p>
+          </div>
+          <div class="card" style="padding:12px; display:flex; align-items:center; gap:10px;">
+            <span>✅</span><p><code>kubectl get pods/services</code></p>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <div class="card amber">
+          <h3>¿Por qué kubectl en vez de Helm Provider?</h3>
+          <p>El Terraform Helm provider tenía incompatibilidad con clusters GKE creados en el mismo <code>apply</code>. Error: <em>context deadline exceeded</em> a los 15 min. Solución: imágenes Docker directas (<code>postgres:16</code>, <code>apache/kafka:3.7.0</code>) vía kubectl.</p>
+        </div>
+        <div class="card cyan">
+          <h3>Workload Identity Federation</h3>
+          <p>GitHub Actions se autentica en GCP via <strong>OIDC</strong>, sin almacenar Service Account keys. La condición de atributo limita el acceso al repositorio exacto de ops.</p>
+        </div>
+        <div class="grid-2" style="gap:8px; margin-top:4px;">
+          <div class="card" style="padding:12px; text-align:center;">
+            <strong style="color:var(--green);">Staging</strong>
+            <p>votes-staging · 2×e2-medium</p>
+          </div>
+          <div class="card" style="padding:12px; text-align:center;">
+            <strong style="color:var(--purple);">Prod</strong>
+            <p>votes-prod · 3×e2-medium</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <div class="slide-num">7 / 9</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SLIDE 8 — ERRORES & SOLUCIONES
+  ══════════════════════════════════════════════ -->
+  <div class="slide">
+    <div class="title-bar">
+      <h2>Errores Clave &amp; Soluciones</h2>
+      <div class="accent"></div>
+    </div>
+
+    <table style="font-size:.8rem;">
+      <thead>
+        <tr>
+          <th>Error</th>
+          <th>Causa</th>
+          <th>Solución</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="tag red">Helm timeout 5 min</span></td>
+          <td><code>listeners.interbroker.protocol</code> es solo ZooKeeper — crashea Kafka KRaft</td>
+          <td>Eliminar ese parámetro del chart</td>
+        </tr>
+        <tr>
+          <td><span class="tag red">Helm timeout 15 min</span></td>
+          <td>Incompatibilidad del Terraform Helm Provider con GKE dinámico</td>
+          <td>Reemplazar Helm por <strong>kubectl apply</strong> directo con imágenes Docker</td>
+        </tr>
+        <tr>
+          <td><span class="tag amber">409 Already Exists</span></td>
+          <td>Cluster existía en GCP pero no en el state de Terraform (GCS)</td>
+          <td><code>terraform import</code> o limpiar state + recrear</td>
+        </tr>
+        <tr>
+          <td><span class="tag amber">WIF 403</span></td>
+          <td>Faltaba <code>attribute-condition</code> en el provider OIDC</td>
+          <td>Agregar condición <code>assertion.repository == 'org/repo-ops'</code></td>
+        </tr>
+        <tr>
+          <td><span class="tag blue">HCL syntax error</span></td>
+          <td>Punto y coma (<code>;</code>) en variables HCL — inválido</td>
+          <td>Formato multilínea en todos los bloques</td>
+        </tr>
+        <tr>
+          <td><span class="tag blue">Git push 403</span></td>
+          <td>Token sin scope <code>repo</code>, sin terminal para credenciales</td>
+          <td>Clave SSH ed25519 + <code>~/.ssh/config</code> + remote SSH</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="slide-num">8 / 9</div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SLIDE 9 — RESULTADOS & CIERRE
+  ══════════════════════════════════════════════ -->
+  <div class="slide">
+    <div class="title-bar">
+      <h2>Resultados</h2>
+      <div class="accent"></div>
+    </div>
+
+    <div class="grid-2" style="gap:24px; width:100%; align-items:start;">
+
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <h3 style="color:var(--green);">✅ Implementado</h3>
+        <ul style="gap:6px;">
+          <li>3 pipelines CI · unit + integration tests</li>
+          <li>CD automático a Staging (push release/*)</li>
+          <li>CD a Prod con aprobación manual</li>
+          <li>GKE clusters en GCP vía Terraform</li>
+          <li>Workload Identity Federation (sin secrets de larga duración)</li>
+          <li>4 patrones de nube: Rate Limiter, Retry, Circuit Breaker, Bulkhead</li>
+          <li>Destroy workflow con confirmación</li>
+          <li>Diagramas de arquitectura (SVG)</li>
+        </ul>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:14px;">
+        <div class="card" style="padding:16px;">
+          <h3 style="margin-bottom:12px;">Stack completo</h3>
+          <div style="display:flex; flex-wrap:wrap; gap:8px;">
+            <span class="tag blue">Java · Spring Boot</span>
+            <span class="tag cyan">Go 1.24</span>
+            <span class="tag green">Node.js 22</span>
+            <span class="tag amber">Kafka KRaft</span>
+            <span class="tag green">PostgreSQL 16</span>
+            <span class="tag purple">GKE Standard</span>
+            <span class="tag blue">Terraform 1.9</span>
+            <span class="tag amber">GitHub Actions</span>
+            <span class="tag red">Resilience4j</span>
+            <span class="tag cyan">Docker Hub</span>
+          </div>
+        </div>
+
+        <div class="card" style="padding:16px; border-color:#10b98160;">
+          <h3 style="margin-bottom:8px;">Lección principal</h3>
+          <p>Las herramientas de orquestación tienen <strong>fricciones reales</strong> entre sí. El mayor aprendizaje no fue el código sino diagnosticar y resolver incompatibilidades entre Terraform, Helm y GKE en un pipeline real.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="margin-top:24px; text-align:center;">
+      <p style="font-size:.9rem; color:#475569;">
+        github.com/DanielJPC19/microservices-demo-ingesoft-v &nbsp;·&nbsp;
+        github.com/DanielJPC19/microservices-demo-ingesoft-v-ops
+      </p>
+    </div>
+
+    <div class="slide-num">9 / 9</div>
+  </div>
+
+</div><!-- /deck -->
+
+<div class="nav">
+  <button id="prev" disabled>← Anterior</button>
+  <span class="counter" id="counter">1 / 9</span>
+  <button id="next">Siguiente →</button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total  = slides.length;
+  let current  = 0;
+
+  const prevBtn    = document.getElementById('prev');
+  const nextBtn    = document.getElementById('next');
+  const counter    = document.getElementById('counter');
+  const progress   = document.getElementById('progress');
+  const timerEl    = document.getElementById('timer');
+
+  function goTo(n) {
+    slides[current].classList.remove('active');
+    current = Math.max(0, Math.min(n, total - 1));
+    slides[current].classList.add('active');
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === total - 1;
+    counter.textContent = `${current + 1} / ${total}`;
+    progress.style.width = `${((current + 1) / total) * 100}%`;
+  }
+
+  prevBtn.addEventListener('click', () => goTo(current - 1));
+  nextBtn.addEventListener('click', () => goTo(current + 1));
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); goTo(current + 1); }
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')                    { e.preventDefault(); goTo(current - 1); }
+  });
+
+  // Click anywhere on slide to advance
+  document.getElementById('deck').addEventListener('click', e => {
+    if (!e.target.closest('button')) goTo(current + 1);
+  });
+
+  // ── Timer ──
+  const TOTAL_SECS = 8 * 60;
+  let elapsed = 0;
+  const fmt = s => `${Math.floor(s/60)}:${String(s%60).padStart(2,'0')}`;
+  setInterval(() => {
+    elapsed++;
+    timerEl.textContent = `${fmt(elapsed)} / 8:00`;
+    const remaining = TOTAL_SECS - elapsed;
+    timerEl.className = 'timer' + (remaining < 0 ? ' over' : remaining < 60 ? ' warn' : '');
+  }, 1000);
+
+  goTo(0);
+</script>
+</body>
+</html>
