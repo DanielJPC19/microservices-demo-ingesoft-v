@@ -1,5 +1,7 @@
 package com.ingesoft.vote.controller;
 
+import io.github.resilience4j.ratelimiter.RequestNotPermitted;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,6 +55,7 @@ public class VoteController {
     }
 
     @PostMapping("/")
+    @RateLimiter(name = "voteRateLimiter", fallbackMethod = "rateLimitFallback")
     String postForm(@CookieValue(name = "voter_id", defaultValue = "") String voterId,
                     @ModelAttribute Vote voteInput,
                     Model model,
@@ -86,6 +89,21 @@ public class VoteController {
             }
         });
 
+        return "index";
+    }
+
+    String rateLimitFallback(@CookieValue(name = "voter_id", defaultValue = "") String voterId,
+                             @ModelAttribute Vote voteInput,
+                             Model model,
+                             HttpServletResponse response,
+                             RequestNotPermitted ex) {
+        logger.warn("Rate limit exceeded for voter: {}", voterId);
+        Vote v = new Vote();
+        model.addAttribute("optionA", v.getOptionA());
+        model.addAttribute("optionB", v.getOptionB());
+        model.addAttribute("hostname", v.getHostname());
+        model.addAttribute("vote", voteInput.getVote());
+        model.addAttribute("error", "Demasiadas solicitudes. Espera un momento antes de volver a votar.");
         return "index";
     }
 

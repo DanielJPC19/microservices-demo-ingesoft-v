@@ -1,0 +1,193 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 680" width="1000" height="680" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#475569"/>
+    </marker>
+    <marker id="arr-r" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#ef4444"/>
+    </marker>
+    <marker id="arr-b" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#3b82f6"/>
+    </marker>
+    <marker id="arr-g" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#16a34a"/>
+    </marker>
+    <filter id="sh"><feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.12"/></filter>
+  </defs>
+
+  <rect width="1000" height="680" fill="#f8fafc" rx="8"/>
+
+  <text x="500" y="36" text-anchor="middle" font-size="20" font-weight="bold" fill="#1e293b">Arquitectura de Infraestructura GCP</text>
+  <text x="500" y="56" text-anchor="middle" font-size="13" fill="#64748b">Workload Identity Federation · GKE Standard · Terraform GCS Backend</text>
+
+  <!-- GitHub Actions box (external) -->
+  <rect x="20" y="75" width="220" height="140" rx="10" fill="#f1f5f9" stroke="#94a3b8" stroke-width="1.5" filter="url(#sh)"/>
+  <text x="130" y="98" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e293b">GitHub Actions</text>
+  <text x="130" y="113" text-anchor="middle" font-size="10" fill="#64748b">microservices-demo-ingesoft-v-ops</text>
+  <rect x="40" y="120" width="180" height="36" rx="6" fill="#e2e8f0"/>
+  <text x="130" y="136" text-anchor="middle" font-size="11" font-weight="bold" fill="#334155">cd-infra.yml</text>
+  <text x="130" y="149" text-anchor="middle" font-size="10" fill="#64748b">ubuntu-latest runner</text>
+  <text x="130" y="175" text-anchor="middle" font-size="10" fill="#475569">OIDC token request</text>
+  <text x="130" y="188" text-anchor="middle" font-size="10" fill="#475569">id-token: write</text>
+
+  <!-- WIF arrow -->
+  <line x1="240" y1="140" x2="288" y2="140" stroke="#ef4444" stroke-width="2" marker-end="url(#arr-r)" stroke-dasharray="5,3"/>
+  <text x="264" y="132" text-anchor="middle" font-size="9" fill="#ef4444">OIDC</text>
+  <text x="264" y="143" text-anchor="middle" font-size="9" fill="#ef4444">JWT token</text>
+
+  <!-- GCP Project box -->
+  <rect x="290" y="70" width="690" height="575" rx="12" fill="#fafafa" stroke="#4285f4" stroke-width="2" filter="url(#sh)"/>
+  <rect x="290" y="70" width="690" height="32" rx="12" fill="#4285f4"/>
+  <rect x="290" y="90" width="690" height="12" fill="#4285f4"/>
+  <text x="635" y="90" text-anchor="middle" font-size="13" font-weight="bold" fill="white">☁ GCP Project: ingesoft-v</text>
+
+  <!-- IAM / WIF section -->
+  <rect x="308" y="108" width="300" height="160" rx="8" fill="#fef2f2" stroke="#fca5a5" stroke-width="1.5"/>
+  <text x="458" y="128" text-anchor="middle" font-size="12" font-weight="bold" fill="#991b1b">IAM &amp; Workload Identity</text>
+
+  <rect x="320" y="138" width="276" height="50" rx="6" fill="white" stroke="#fca5a5" stroke-width="1"/>
+  <text x="458" y="155" text-anchor="middle" font-size="11" font-weight="bold" fill="#7f1d1d">WIF Pool: github-pool</text>
+  <text x="458" y="170" text-anchor="middle" font-size="9" fill="#475569">Provider: github-provider (OIDC)</text>
+  <text x="458" y="182" text-anchor="middle" font-size="9" fill="#475569">Condition: repo == 'DanielJPC19/ops'</text>
+
+  <rect x="320" y="198" width="276" height="58" rx="6" fill="white" stroke="#fca5a5" stroke-width="1"/>
+  <text x="458" y="215" text-anchor="middle" font-size="11" font-weight="bold" fill="#7f1d1d">Service Account: tf-deployer</text>
+  <text x="458" y="230" text-anchor="middle" font-size="9" fill="#475569">roles/container.admin</text>
+  <text x="458" y="242" text-anchor="middle" font-size="9" fill="#475569">roles/compute.viewer · roles/storage.objectAdmin</text>
+  <text x="458" y="254" text-anchor="middle" font-size="9" fill="#475569">roles/iam.serviceAccountUser</text>
+
+  <!-- GCS Backend section -->
+  <rect x="625" y="108" width="340" height="100" rx="8" fill="#f0fdf4" stroke="#86efac" stroke-width="1.5"/>
+  <text x="795" y="128" text-anchor="middle" font-size="12" font-weight="bold" fill="#14532d">GCS: Terraform State Backend</text>
+  <text x="795" y="148" text-anchor="middle" font-size="11" fill="#475569">gs://ingesoft-v-tfstate/</text>
+  <rect x="640" y="158" width="150" height="34" rx="5" fill="white" stroke="#86efac" stroke-width="1"/>
+  <text x="715" y="172" text-anchor="middle" font-size="10" fill="#065f46">microservices-demo/</text>
+  <text x="715" y="184" text-anchor="middle" font-size="10" fill="#065f46">staging/</text>
+  <rect x="800" y="158" width="150" height="34" rx="5" fill="white" stroke="#86efac" stroke-width="1"/>
+  <text x="875" y="172" text-anchor="middle" font-size="10" fill="#065f46">microservices-demo/</text>
+  <text x="875" y="184" text-anchor="middle" font-size="10" fill="#065f46">prod/</text>
+
+  <!-- Terraform arrow -->
+  <line x1="458" y1="268" x2="458" y2="295" stroke="#3b82f6" stroke-width="2" marker-end="url(#arr-b)"/>
+  <text x="470" y="285" font-size="9" fill="#3b82f6">terraform apply</text>
+
+  <!-- GKE Staging -->
+  <rect x="308" y="300" width="300" height="240" rx="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5" filter="url(#sh)"/>
+  <rect x="308" y="300" width="300" height="28" rx="10" fill="#3b82f6"/>
+  <rect x="308" y="316" width="300" height="12" fill="#3b82f6"/>
+  <text x="458" y="317" text-anchor="middle" font-size="12" font-weight="bold" fill="white">GKE: votes-staging</text>
+  <text x="458" y="337" text-anchor="middle" font-size="10" fill="#1e40af">us-central1 · 2 nodos e2-medium · 30GB</text>
+
+  <!-- Nodes staging -->
+  <rect x="320" y="350" width="128" height="50" rx="6" fill="white" stroke="#93c5fd" stroke-width="1"/>
+  <text x="384" y="368" text-anchor="middle" font-size="10" font-weight="bold" fill="#1e40af">Node 1</text>
+  <text x="384" y="382" text-anchor="middle" font-size="9" fill="#475569">e2-medium</text>
+  <text x="384" y="394" text-anchor="middle" font-size="9" fill="#475569">2vCPU / 4GB</text>
+
+  <rect x="460" y="350" width="128" height="50" rx="6" fill="white" stroke="#93c5fd" stroke-width="1"/>
+  <text x="524" y="368" text-anchor="middle" font-size="10" font-weight="bold" fill="#1e40af">Node 2</text>
+  <text x="524" y="382" text-anchor="middle" font-size="9" fill="#475569">e2-medium</text>
+  <text x="524" y="394" text-anchor="middle" font-size="9" fill="#475569">2vCPU / 4GB</text>
+
+  <!-- Pods staging -->
+  <text x="458" y="420" text-anchor="middle" font-size="10" font-weight="bold" fill="#1e40af">Pods desplegados (kubectl apply)</text>
+  <rect x="318" y="428" width="68" height="48" rx="5" fill="white" stroke="#93c5fd" stroke-width="1"/>
+  <text x="352" y="445" text-anchor="middle" font-size="9" font-weight="bold" fill="#1e40af">vote</text>
+  <text x="352" y="457" text-anchor="middle" font-size="8" fill="#475569">Java</text>
+  <text x="352" y="469" text-anchor="middle" font-size="8" fill="#475569">:8080</text>
+
+  <rect x="394" y="428" width="68" height="48" rx="5" fill="white" stroke="#93c5fd" stroke-width="1"/>
+  <text x="428" y="445" text-anchor="middle" font-size="9" font-weight="bold" fill="#1e40af">worker</text>
+  <text x="428" y="457" text-anchor="middle" font-size="8" fill="#475569">Go</text>
+  <text x="428" y="469" text-anchor="middle" font-size="8" fill="#475569">no port</text>
+
+  <rect x="470" y="428" width="68" height="48" rx="5" fill="white" stroke="#93c5fd" stroke-width="1"/>
+  <text x="504" y="445" text-anchor="middle" font-size="9" font-weight="bold" fill="#1e40af">result</text>
+  <text x="504" y="457" text-anchor="middle" font-size="8" fill="#475569">Node.js</text>
+  <text x="504" y="469" text-anchor="middle" font-size="8" fill="#475569">:80</text>
+
+  <rect x="318" y="484" width="105" height="40" rx="5" fill="#fef3c7" stroke="#f59e0b" stroke-width="1"/>
+  <text x="370" y="500" text-anchor="middle" font-size="9" font-weight="bold" fill="#92400e">kafka</text>
+  <text x="370" y="514" text-anchor="middle" font-size="8" fill="#475569">apache/kafka:3.7.0</text>
+
+  <rect x="432" y="484" width="105" height="40" rx="5" fill="#f0fdf4" stroke="#22c55e" stroke-width="1"/>
+  <text x="484" y="500" text-anchor="middle" font-size="9" font-weight="bold" fill="#14532d">postgresql</text>
+  <text x="484" y="514" text-anchor="middle" font-size="8" fill="#475569">postgres:16</text>
+
+  <!-- GKE Prod -->
+  <rect x="625" y="215" width="340" height="325" rx="10" fill="#dcfce7" stroke="#16a34a" stroke-width="1.5" filter="url(#sh)"/>
+  <rect x="625" y="215" width="340" height="28" rx="10" fill="#16a34a"/>
+  <rect x="625" y="231" width="340" height="12" fill="#16a34a"/>
+  <text x="795" y="232" text-anchor="middle" font-size="12" font-weight="bold" fill="white">GKE: votes-prod</text>
+  <text x="795" y="252" text-anchor="middle" font-size="10" fill="#14532d">us-central1 · 3 nodos e2-medium · 50GB</text>
+
+  <!-- Nodes prod -->
+  <rect x="637" y="265" width="90" height="50" rx="6" fill="white" stroke="#86efac" stroke-width="1"/>
+  <text x="682" y="283" text-anchor="middle" font-size="10" font-weight="bold" fill="#14532d">Node 1</text>
+  <text x="682" y="296" text-anchor="middle" font-size="9" fill="#475569">e2-medium</text>
+  <text x="682" y="308" text-anchor="middle" font-size="9" fill="#475569">2vCPU/4GB</text>
+
+  <rect x="737" y="265" width="90" height="50" rx="6" fill="white" stroke="#86efac" stroke-width="1"/>
+  <text x="782" y="283" text-anchor="middle" font-size="10" font-weight="bold" fill="#14532d">Node 2</text>
+  <text x="782" y="296" text-anchor="middle" font-size="9" fill="#475569">e2-medium</text>
+  <text x="782" y="308" text-anchor="middle" font-size="9" fill="#475569">2vCPU/4GB</text>
+
+  <rect x="837" y="265" width="90" height="50" rx="6" fill="white" stroke="#86efac" stroke-width="1"/>
+  <text x="882" y="283" text-anchor="middle" font-size="10" font-weight="bold" fill="#14532d">Node 3</text>
+  <text x="882" y="296" text-anchor="middle" font-size="9" fill="#475569">e2-medium</text>
+  <text x="882" y="308" text-anchor="middle" font-size="9" fill="#475569">2vCPU/4GB</text>
+
+  <!-- Pods prod -->
+  <text x="795" y="335" text-anchor="middle" font-size="10" font-weight="bold" fill="#14532d">Pods desplegados (kubectl apply)</text>
+  <rect x="635" y="343" width="70" height="50" rx="5" fill="white" stroke="#86efac" stroke-width="1"/>
+  <text x="670" y="361" text-anchor="middle" font-size="9" font-weight="bold" fill="#14532d">vote</text>
+  <text x="670" y="374" text-anchor="middle" font-size="8" fill="#475569">Java</text>
+  <text x="670" y="387" text-anchor="middle" font-size="8" fill="#475569">:8080</text>
+
+  <rect x="715" y="343" width="70" height="50" rx="5" fill="white" stroke="#86efac" stroke-width="1"/>
+  <text x="750" y="361" text-anchor="middle" font-size="9" font-weight="bold" fill="#14532d">worker</text>
+  <text x="750" y="374" text-anchor="middle" font-size="8" fill="#475569">Go</text>
+  <text x="750" y="387" text-anchor="middle" font-size="8" fill="#475569">no port</text>
+
+  <rect x="795" y="343" width="70" height="50" rx="5" fill="white" stroke="#86efac" stroke-width="1"/>
+  <text x="830" y="361" text-anchor="middle" font-size="9" font-weight="bold" fill="#14532d">result</text>
+  <text x="830" y="374" text-anchor="middle" font-size="8" fill="#475569">Node.js</text>
+  <text x="830" y="387" text-anchor="middle" font-size="8" fill="#475569">:80</text>
+
+  <rect x="875" y="343" width="70" height="50" rx="5" fill="#fef9c3" stroke="#eab308" stroke-width="1"/>
+  <text x="910" y="361" text-anchor="middle" font-size="9" font-weight="bold" fill="#713f12">+1</text>
+  <text x="910" y="374" text-anchor="middle" font-size="8" fill="#475569">más pods</text>
+  <text x="910" y="387" text-anchor="middle" font-size="8" fill="#475569">por nodo</text>
+
+  <rect x="635" y="402" width="110" height="40" rx="5" fill="#fef3c7" stroke="#f59e0b" stroke-width="1"/>
+  <text x="690" y="419" text-anchor="middle" font-size="9" font-weight="bold" fill="#92400e">kafka</text>
+  <text x="690" y="433" text-anchor="middle" font-size="8" fill="#475569">apache/kafka:3.7.0</text>
+
+  <rect x="755" y="402" width="110" height="40" rx="5" fill="#f0fdf4" stroke="#22c55e" stroke-width="1"/>
+  <text x="810" y="419" text-anchor="middle" font-size="9" font-weight="bold" fill="#14532d">postgresql</text>
+  <text x="810" y="433" text-anchor="middle" font-size="8" fill="#475569">postgres:16</text>
+
+  <!-- LoadBalancer arrows -->
+  <text x="795" y="462" text-anchor="middle" font-size="10" font-weight="bold" fill="#14532d">LoadBalancer Services (IP externa GCP)</text>
+  <rect x="635" y="470" width="215" height="32" rx="5" fill="white" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="742" y="484" text-anchor="middle" font-size="10" fill="#14532d">vote → IP:80</text>
+  <text x="742" y="496" text-anchor="middle" font-size="9" fill="#64748b">GCP external LoadBalancer</text>
+  <rect x="860" y="470" width="95" height="32" rx="5" fill="white" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="907" y="484" text-anchor="middle" font-size="10" fill="#14532d">result → IP:80</text>
+  <text x="907" y="496" text-anchor="middle" font-size="9" fill="#64748b">LoadBalancer</text>
+
+  <!-- LoadBalancer staging -->
+  <rect x="308" y="545" width="300" height="32" rx="5" fill="white" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="458" y="559" text-anchor="middle" font-size="10" fill="#1e40af">vote → IP:80  ·  result → IP:80</text>
+  <text x="458" y="571" text-anchor="middle" font-size="9" fill="#64748b">GCP external LoadBalancer</text>
+
+  <!-- Bottom: Docker Hub external -->
+  <rect x="308" y="590" width="655" height="42" rx="8" fill="#fff7ed" stroke="#fb923c" stroke-width="1.5"/>
+  <text x="635" y="608" text-anchor="middle" font-size="12" font-weight="bold" fill="#9a3412">🐳 Docker Hub — Imagen Registry (externo a GCP)</text>
+  <text x="635" y="625" text-anchor="middle" font-size="10" fill="#475569">vote:staging · worker:staging · result:staging · vote:prod · vote:&lt;sha&gt; ...</text>
+
+  <!-- Arrow: Docker Hub → staging pods -->
+  <line x1="458" y1="590" x2="458" y2="535" stroke="#fb923c" stroke-width="1.5" marker-end="url(#arr)" stroke-dasharray="4,3"/>
+  <!-- Arrow: Docker Hub → prod pods -->
+  <line x1="795" y1="590" x2="795" y2="545" stroke="#fb923c" stroke-width="1.5" marker-end="url(#arr)" stroke-dasharray="4,3"/>
+</svg>
