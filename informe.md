@@ -2331,5 +2331,4 @@ git push origin main
 
 ---
 
-*Informe generado para el curso de Ingeniería de Software V.*  
 *Repositorios: `DanielJPC19/microservices-demo-ingesoft-v` y `DanielJPC19/microservices-demo-ingesoft-v-ops`*
