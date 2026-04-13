@@ -1,0 +1,206 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 580" width="1000" height="580" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#475569"/>
+    </marker>
+    <marker id="arrow-blue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#3b82f6"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#10b981"/>
+    </marker>
+    <marker id="arrow-purple" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#a855f7"/>
+    </marker>
+    <marker id="arrow-orange" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#f97316"/>
+    </marker>
+    <filter id="shadow">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1000" height="580" fill="#f8fafc" rx="8"/>
+
+  <!-- Title -->
+  <text x="500" y="35" text-anchor="middle" font-size="20" font-weight="bold" fill="#1e293b">Estrategia de Branching — Git Flow</text>
+  <text x="500" y="55" text-anchor="middle" font-size="13" fill="#64748b">Dev Repo (Git Flow) → Ops Repo (Trunk-Based) → GKE Environments</text>
+
+  <!-- ===== DEV REPO section ===== -->
+  <rect x="20" y="70" width="530" height="460" rx="12" fill="none" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="8,4"/>
+  <rect x="20" y="60" width="160" height="24" rx="4" fill="#e2e8f0"/>
+  <text x="100" y="76" text-anchor="middle" font-size="12" fill="#475569" font-weight="bold">Dev Repo (Git Flow)</text>
+
+  <!-- feature/* branch -->
+  <rect x="40" y="95" width="150" height="90" rx="8" fill="#fef9c3" stroke="#eab308" stroke-width="2" filter="url(#shadow)"/>
+  <text x="115" y="118" text-anchor="middle" font-size="13" font-weight="bold" fill="#713f12">feature/*</text>
+  <text x="115" y="136" text-anchor="middle" font-size="10" fill="#475569">feature/add-login</text>
+  <text x="115" y="149" text-anchor="middle" font-size="10" fill="#475569">feature/fix-kafka</text>
+  <text x="115" y="162" text-anchor="middle" font-size="10" fill="#475569">feature/update-ui</text>
+  <text x="115" y="175" text-anchor="middle" font-size="9" fill="#92400e">sin CI automático</text>
+
+  <!-- develop branch -->
+  <rect x="40" y="235" width="150" height="95" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="2" filter="url(#shadow)"/>
+  <text x="115" y="258" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e40af">develop</text>
+  <text x="115" y="276" text-anchor="middle" font-size="10" fill="#475569">Rama de integración</text>
+  <text x="115" y="289" text-anchor="middle" font-size="10" fill="#3b82f6">CI: ci-develop.yml</text>
+  <text x="115" y="302" text-anchor="middle" font-size="10" fill="#475569">unit tests + build</text>
+  <text x="115" y="315" text-anchor="middle" font-size="9" fill="#1d4ed8">tag: develop-{sha}</text>
+
+  <!-- release/* branch -->
+  <rect x="220" y="235" width="150" height="95" rx="8" fill="#dcfce7" stroke="#22c55e" stroke-width="2" filter="url(#shadow)"/>
+  <text x="295" y="258" text-anchor="middle" font-size="13" font-weight="bold" fill="#14532d">release/*</text>
+  <text x="295" y="276" text-anchor="middle" font-size="10" fill="#475569">release/v1.0</text>
+  <text x="295" y="289" text-anchor="middle" font-size="10" fill="#22c55e">CI: ci-release.yml</text>
+  <text x="295" y="302" text-anchor="middle" font-size="10" fill="#475569">integration tests</text>
+  <text x="295" y="315" text-anchor="middle" font-size="9" fill="#15803d">tag: staging</text>
+
+  <!-- main branch -->
+  <rect x="400" y="235" width="130" height="95" rx="8" fill="#fdf4ff" stroke="#a855f7" stroke-width="2" filter="url(#shadow)"/>
+  <text x="465" y="258" text-anchor="middle" font-size="13" font-weight="bold" fill="#581c87">main</text>
+  <text x="465" y="276" text-anchor="middle" font-size="10" fill="#475569">Producción</text>
+  <text x="465" y="289" text-anchor="middle" font-size="10" fill="#a855f7">CI: ci-main.yml</text>
+  <text x="465" y="302" text-anchor="middle" font-size="10" fill="#475569">build + push prod</text>
+  <text x="465" y="315" text-anchor="middle" font-size="9" fill="#7c3aed">tag: prod</text>
+
+  <!-- CI pipelines boxes -->
+  <rect x="40" y="390" width="490" height="125" rx="8" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1.5"/>
+  <text x="285" y="408" text-anchor="middle" font-size="11" font-weight="bold" fill="#475569">Pipelines CI (GitHub Actions)</text>
+
+  <!-- ci-develop -->
+  <rect x="55" y="415" width="145" height="88" rx="6" fill="#dbeafe" stroke="#3b82f6" stroke-width="1.5"/>
+  <text x="127" y="432" text-anchor="middle" font-size="10" font-weight="bold" fill="#1e40af">ci-develop.yml</text>
+  <text x="127" y="446" text-anchor="middle" font-size="9" fill="#475569">on: push develop</text>
+  <text x="127" y="459" text-anchor="middle" font-size="9" fill="#475569">▸ lint + unit tests</text>
+  <text x="127" y="472" text-anchor="middle" font-size="9" fill="#475569">▸ Docker build</text>
+  <text x="127" y="485" text-anchor="middle" font-size="9" fill="#3b82f6">▸ push :develop-sha</text>
+  <text x="127" y="498" text-anchor="middle" font-size="9" fill="#475569">▸ no CD trigger</text>
+
+  <!-- ci-release -->
+  <rect x="215" y="415" width="145" height="88" rx="6" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5"/>
+  <text x="287" y="432" text-anchor="middle" font-size="10" font-weight="bold" fill="#14532d">ci-release.yml</text>
+  <text x="287" y="446" text-anchor="middle" font-size="9" fill="#475569">on: push release/*</text>
+  <text x="287" y="459" text-anchor="middle" font-size="9" fill="#475569">▸ integration tests</text>
+  <text x="287" y="472" text-anchor="middle" font-size="9" fill="#475569">▸ Docker build</text>
+  <text x="287" y="485" text-anchor="middle" font-size="9" fill="#22c55e">▸ push :staging</text>
+  <text x="287" y="498" text-anchor="middle" font-size="9" fill="#f97316">▸ trigger CD staging</text>
+
+  <!-- ci-main -->
+  <rect x="375" y="415" width="145" height="88" rx="6" fill="#fdf4ff" stroke="#a855f7" stroke-width="1.5"/>
+  <text x="447" y="432" text-anchor="middle" font-size="10" font-weight="bold" fill="#581c87">ci-main.yml</text>
+  <text x="447" y="446" text-anchor="middle" font-size="9" fill="#475569">on: push main</text>
+  <text x="447" y="459" text-anchor="middle" font-size="9" fill="#475569">▸ build + test</text>
+  <text x="447" y="472" text-anchor="middle" font-size="9" fill="#475569">▸ Docker build</text>
+  <text x="447" y="485" text-anchor="middle" font-size="9" fill="#a855f7">▸ push :prod</text>
+  <text x="447" y="498" text-anchor="middle" font-size="9" fill="#f97316">▸ trigger CD prod</text>
+
+  <!-- Arrows between branches in dev repo -->
+  <!-- feature → develop -->
+  <line x1="115" y1="185" x2="115" y2="233" stroke="#eab308" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="90" y="215" text-anchor="middle" font-size="9" fill="#92400e">PR merge</text>
+
+  <!-- develop → release -->
+  <line x1="192" y1="282" x2="218" y2="282" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrow-blue)"/>
+  <text x="205" y="274" text-anchor="middle" font-size="9" fill="#3b82f6">branch</text>
+
+  <!-- release → main -->
+  <line x1="372" y1="282" x2="398" y2="282" stroke="#22c55e" stroke-width="2" marker-end="url(#arrow-green)"/>
+  <text x="385" y="274" text-anchor="middle" font-size="9" fill="#22c55e">PR merge</text>
+
+  <!-- develop → ci-develop -->
+  <line x1="115" y1="332" x2="127" y2="413" stroke="#3b82f6" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrow-blue)"/>
+
+  <!-- release → ci-release -->
+  <line x1="295" y1="332" x2="287" y2="413" stroke="#22c55e" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrow-green)"/>
+
+  <!-- main → ci-main -->
+  <line x1="465" y1="332" x2="447" y2="413" stroke="#a855f7" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrow-purple)"/>
+
+  <!-- ===== OPS REPO section ===== -->
+  <rect x="570" y="70" width="210" height="200" rx="12" fill="none" stroke="#fed7aa" stroke-width="2" stroke-dasharray="8,4"/>
+  <rect x="570" y="60" width="190" height="24" rx="4" fill="#ffedd5"/>
+  <text x="665" y="76" text-anchor="middle" font-size="12" fill="#9a3412" font-weight="bold">Ops Repo (Trunk-Based)</text>
+
+  <rect x="590" y="90" width="170" height="165" rx="8" fill="#fff7ed" stroke="#fb923c" stroke-width="2" filter="url(#shadow)"/>
+  <text x="675" y="112" text-anchor="middle" font-size="13" font-weight="bold" fill="#9a3412">main (only)</text>
+  <text x="675" y="130" text-anchor="middle" font-size="10" fill="#475569">cd-infra.yml</text>
+  <text x="675" y="143" text-anchor="middle" font-size="9" fill="#475569">on: workflow_dispatch</text>
+  <text x="675" y="158" text-anchor="middle" font-size="9" fill="#475569">─────────────────</text>
+  <text x="675" y="171" text-anchor="middle" font-size="9" fill="#475569">1. Terraform GKE cluster</text>
+  <text x="675" y="184" text-anchor="middle" font-size="9" fill="#475569">2. gcloud get-credentials</text>
+  <text x="675" y="197" text-anchor="middle" font-size="9" fill="#475569">3. kubectl apply infra</text>
+  <text x="675" y="210" text-anchor="middle" font-size="9" fill="#475569">4. kubectl apply apps</text>
+  <text x="675" y="223" text-anchor="middle" font-size="9" fill="#fb923c">env: staging | prod</text>
+  <text x="675" y="238" text-anchor="middle" font-size="9" fill="#475569">approval gate (prod)</text>
+
+  <!-- Docker Hub -->
+  <rect x="590" y="285" width="170" height="65" rx="8" fill="#e0f2fe" stroke="#0ea5e9" stroke-width="2" filter="url(#shadow)"/>
+  <text x="675" y="307" text-anchor="middle" font-size="20">🐋</text>
+  <text x="675" y="325" text-anchor="middle" font-size="12" font-weight="bold" fill="#0c4a6e">Docker Hub</text>
+  <text x="675" y="340" text-anchor="middle" font-size="9" fill="#475569">vote / worker / result</text>
+
+  <!-- GKE Environments -->
+  <rect x="570" y="375" width="210" height="150" rx="12" fill="none" stroke="#a3e635" stroke-width="2" stroke-dasharray="6,3"/>
+  <rect x="570" y="365" width="145" height="22" rx="4" fill="#ecfccb"/>
+  <text x="642" y="380" text-anchor="middle" font-size="11" fill="#365314" font-weight="bold">GKE Environments (GCP)</text>
+
+  <rect x="580" y="388" width="88" height="128" rx="6" fill="#dcfce7" stroke="#22c55e" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="624" y="406" text-anchor="middle" font-size="11" font-weight="bold" fill="#14532d">Staging</text>
+  <text x="624" y="420" text-anchor="middle" font-size="9" fill="#475569">votes-staging</text>
+  <text x="624" y="433" text-anchor="middle" font-size="9" fill="#475569">2 × e2-medium</text>
+  <text x="624" y="446" text-anchor="middle" font-size="9" fill="#22c55e">tag: :staging</text>
+  <text x="624" y="459" text-anchor="middle" font-size="9" fill="#475569">us-central1</text>
+  <text x="624" y="475" text-anchor="middle" font-size="9" fill="#475569">auto-deploy</text>
+  <text x="624" y="488" text-anchor="middle" font-size="9" fill="#475569">on release</text>
+  <text x="624" y="508" text-anchor="middle" font-size="9" fill="#475569">merge</text>
+
+  <rect x="678" y="388" width="88" height="128" rx="6" fill="#fdf4ff" stroke="#a855f7" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="722" y="406" text-anchor="middle" font-size="11" font-weight="bold" fill="#581c87">Prod</text>
+  <text x="722" y="420" text-anchor="middle" font-size="9" fill="#475569">votes-prod</text>
+  <text x="722" y="433" text-anchor="middle" font-size="9" fill="#475569">3 × e2-medium</text>
+  <text x="722" y="446" text-anchor="middle" font-size="9" fill="#a855f7">tag: :prod</text>
+  <text x="722" y="459" text-anchor="middle" font-size="9" fill="#475569">us-central1</text>
+  <text x="722" y="475" text-anchor="middle" font-size="9" fill="#7c3aed">manual approval</text>
+  <text x="722" y="488" text-anchor="middle" font-size="9" fill="#475569">on main</text>
+  <text x="722" y="508" text-anchor="middle" font-size="9" fill="#475569">merge</text>
+
+  <!-- Arrows from CI to ops/docker -->
+  <!-- ci-release → Docker Hub -->
+  <line x1="362" y1="459" x2="588" y2="330" stroke="#f97316" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrow-orange)"/>
+  <text x="490" y="388" text-anchor="middle" font-size="9" fill="#f97316">push :staging</text>
+
+  <!-- ci-main → Docker Hub -->
+  <line x1="522" y1="459" x2="590" y2="340" stroke="#a855f7" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrow-purple)"/>
+  <text x="564" y="395" text-anchor="middle" font-size="9" fill="#a855f7">push :prod</text>
+
+  <!-- ci-release → ops repo (workflow_dispatch) -->
+  <line x1="362" y1="440" x2="588" y2="200" stroke="#f97316" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrow-orange)"/>
+  <text x="490" y="305" text-anchor="middle" font-size="9" fill="#f97316">workflow_dispatch</text>
+  <text x="490" y="316" text-anchor="middle" font-size="9" fill="#f97316">env=staging</text>
+
+  <!-- ci-main → ops repo (workflow_dispatch) -->
+  <line x1="522" y1="430" x2="590" y2="210" stroke="#a855f7" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arrow-purple)"/>
+
+  <!-- ops → staging -->
+  <line x1="675" y1="270" x2="624" y2="386" stroke="#22c55e" stroke-width="2" marker-end="url(#arrow-green)"/>
+
+  <!-- ops → prod -->
+  <line x1="690" y1="270" x2="722" y2="386" stroke="#a855f7" stroke-width="2" marker-end="url(#arrow-purple)"/>
+
+  <!-- Docker Hub → ops (pull during deploy) -->
+  <line x1="675" y1="352" x2="675" y2="88" stroke="#0ea5e9" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrow-blue)"/>
+
+  <!-- Legend -->
+  <rect x="20" y="538" width="960" height="35" rx="8" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+  <rect x="35" y="549" width="12" height="12" rx="2" fill="#fef9c3" stroke="#eab308" stroke-width="1"/>
+  <text x="52" y="560" font-size="10" fill="#475569">feature/* (sin CI)</text>
+  <rect x="145" y="549" width="12" height="12" rx="2" fill="#dbeafe" stroke="#3b82f6" stroke-width="1"/>
+  <text x="162" y="560" font-size="10" fill="#475569">develop → unit tests</text>
+  <rect x="280" y="549" width="12" height="12" rx="2" fill="#dcfce7" stroke="#22c55e" stroke-width="1"/>
+  <text x="297" y="560" font-size="10" fill="#475569">release/* → integration + staging CD</text>
+  <rect x="490" y="549" width="12" height="12" rx="2" fill="#fdf4ff" stroke="#a855f7" stroke-width="1"/>
+  <text x="507" y="560" font-size="10" fill="#475569">main → prod CD (manual approval)</text>
+  <line x1="680" y1="555" x2="710" y2="555" stroke="#f97316" stroke-width="2" stroke-dasharray="5,3" marker-end="url(#arrow-orange)"/>
+  <text x="715" y="560" font-size="10" fill="#475569">workflow_dispatch trigger</text>
+</svg>

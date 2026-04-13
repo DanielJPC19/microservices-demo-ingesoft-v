@@ -1,0 +1,181 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1100 700" width="1100" height="700" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="arr" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#475569"/>
+    </marker>
+    <marker id="arr-orange" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#f97316"/>
+    </marker>
+    <marker id="arr-blue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#3b82f6"/>
+    </marker>
+    <marker id="arr-green" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#10b981"/>
+    </marker>
+    <filter id="sh"><feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.12"/></filter>
+  </defs>
+
+  <rect width="1100" height="700" fill="#f8fafc" rx="8"/>
+
+  <!-- Title -->
+  <text x="550" y="36" text-anchor="middle" font-size="20" font-weight="bold" fill="#1e293b">Pipeline CI/CD — Modelo de Dos Repositorios</text>
+  <text x="550" y="56" text-anchor="middle" font-size="13" fill="#64748b">Git Flow (Dev) + Trunk-Based (Ops) con trigger via workflow_dispatch</text>
+
+  <!-- ===== DEV REPO BOX ===== -->
+  <rect x="20" y="70" width="540" height="560" rx="12" fill="#eff6ff" stroke="#93c5fd" stroke-width="2" filter="url(#sh)"/>
+  <rect x="20" y="70" width="540" height="36" rx="12" fill="#3b82f6"/>
+  <rect x="20" y="94" width="540" height="12" rx="0" fill="#3b82f6"/>
+  <text x="290" y="94" text-anchor="middle" font-size="14" font-weight="bold" fill="white">📁 Repositorio de Desarrollo</text>
+  <text x="290" y="108" text-anchor="middle" font-size="11" fill="#bfdbfe">microservices-demo-ingesoft-v</text>
+
+  <!-- Branch flow inside dev repo -->
+  <!-- feature box -->
+  <rect x="40" y="125" width="110" height="44" rx="8" fill="#dbeafe" stroke="#60a5fa" stroke-width="1.5"/>
+  <text x="95" y="144" text-anchor="middle" font-size="12" font-weight="bold" fill="#1d4ed8">feature/*</text>
+  <text x="95" y="160" text-anchor="middle" font-size="10" fill="#475569">nueva función</text>
+
+  <line x1="150" y1="147" x2="178" y2="147" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arr-blue)"/>
+  <text x="164" y="140" text-anchor="middle" font-size="9" fill="#3b82f6">PR</text>
+
+  <!-- develop box -->
+  <rect x="180" y="125" width="110" height="44" rx="8" fill="#dbeafe" stroke="#3b82f6" stroke-width="2"/>
+  <text x="235" y="144" text-anchor="middle" font-size="12" font-weight="bold" fill="#1e40af">develop</text>
+  <text x="235" y="160" text-anchor="middle" font-size="10" fill="#475569">integración</text>
+
+  <line x1="290" y1="147" x2="318" y2="147" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arr-blue)"/>
+  <text x="304" y="140" text-anchor="middle" font-size="9" fill="#3b82f6">PR</text>
+
+  <!-- release box -->
+  <rect x="320" y="125" width="110" height="44" rx="8" fill="#e0f2fe" stroke="#0ea5e9" stroke-width="2"/>
+  <text x="375" y="144" text-anchor="middle" font-size="12" font-weight="bold" fill="#0c4a6e">release/*</text>
+  <text x="375" y="160" text-anchor="middle" font-size="10" fill="#475569">pre-producción</text>
+
+  <line x1="430" y1="147" x2="458" y2="147" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arr-blue)"/>
+  <text x="444" y="140" text-anchor="middle" font-size="9" fill="#3b82f6">PR</text>
+
+  <!-- main box -->
+  <rect x="460" y="125" width="80" height="44" rx="8" fill="#1e40af" stroke="#1e40af" stroke-width="2"/>
+  <text x="500" y="144" text-anchor="middle" font-size="12" font-weight="bold" fill="white">main</text>
+  <text x="500" y="160" text-anchor="middle" font-size="10" fill="#bfdbfe">producción</text>
+
+  <!-- CI Pipelines -->
+  <!-- ci-develop -->
+  <rect x="155" y="195" width="160" height="140" rx="8" fill="white" stroke="#60a5fa" stroke-width="1.5" filter="url(#sh)"/>
+  <rect x="155" y="195" width="160" height="24" rx="8" fill="#60a5fa"/>
+  <rect x="155" y="207" width="160" height="12" fill="#60a5fa"/>
+  <text x="235" y="211" text-anchor="middle" font-size="11" font-weight="bold" fill="white">ci-develop.yml</text>
+  <text x="235" y="230" text-anchor="middle" font-size="10" fill="#475569">✓ Build + Test</text>
+  <text x="235" y="245" text-anchor="middle" font-size="10" fill="#475569">✓ Docker build</text>
+  <text x="235" y="260" text-anchor="middle" font-size="10" fill="#475569">✓ Push :dev</text>
+  <rect x="175" y="275" width="120" height="22" rx="4" fill="#dbeafe"/>
+  <text x="235" y="290" text-anchor="middle" font-size="10" font-weight="bold" fill="#1d4ed8">Tag: :dev</text>
+  <text x="235" y="325" text-anchor="middle" font-size="9" fill="#64748b">push to develop</text>
+
+  <!-- ci-release -->
+  <rect x="295" y="195" width="165" height="160" rx="8" fill="white" stroke="#0ea5e9" stroke-width="1.5" filter="url(#sh)"/>
+  <rect x="295" y="195" width="165" height="24" rx="8" fill="#0ea5e9"/>
+  <rect x="295" y="207" width="165" height="12" fill="#0ea5e9"/>
+  <text x="377" y="211" text-anchor="middle" font-size="11" font-weight="bold" fill="white">ci-release.yml</text>
+  <text x="377" y="230" text-anchor="middle" font-size="10" fill="#475569">✓ Build + Test</text>
+  <text x="377" y="245" text-anchor="middle" font-size="10" fill="#475569">✓ Integration Test</text>
+  <text x="377" y="260" text-anchor="middle" font-size="10" fill="#475569">  (Kafka + PG reales)</text>
+  <text x="377" y="275" text-anchor="middle" font-size="10" fill="#475569">✓ Push :staging</text>
+  <rect x="315" y="290" width="125" height="22" rx="4" fill="#e0f2fe"/>
+  <text x="377" y="305" text-anchor="middle" font-size="10" font-weight="bold" fill="#0c4a6e">Tag: :staging</text>
+  <text x="377" y="345" text-anchor="middle" font-size="9" fill="#64748b">push to release/*</text>
+
+  <!-- ci-main -->
+  <rect x="430" y="195" width="115" height="160" rx="8" fill="white" stroke="#1e40af" stroke-width="1.5" filter="url(#sh)"/>
+  <rect x="430" y="195" width="115" height="24" rx="8" fill="#1e40af"/>
+  <rect x="430" y="207" width="115" height="12" fill="#1e40af"/>
+  <text x="487" y="211" text-anchor="middle" font-size="11" font-weight="bold" fill="white">ci-main.yml</text>
+  <text x="487" y="230" text-anchor="middle" font-size="10" fill="#475569">✓ Build + Test</text>
+  <text x="487" y="245" text-anchor="middle" font-size="10" fill="#475569">✓ Push :prod</text>
+  <text x="487" y="260" text-anchor="middle" font-size="10" fill="#475569">✓ Push :&lt;sha&gt;</text>
+  <rect x="450" y="275" width="95" height="34" rx="4" fill="#dbeafe"/>
+  <text x="497" y="289" text-anchor="middle" font-size="10" font-weight="bold" fill="#1d4ed8">Tag: :prod</text>
+  <text x="497" y="302" text-anchor="middle" font-size="10" font-weight="bold" fill="#1d4ed8">Tag: :&lt;git-sha&gt;</text>
+  <text x="487" y="345" text-anchor="middle" font-size="9" fill="#64748b">push to main</text>
+
+  <!-- Docker Hub box -->
+  <rect x="40" y="400" width="500" height="60" rx="8" fill="#fff7ed" stroke="#fb923c" stroke-width="1.5" filter="url(#sh)"/>
+  <text x="60" y="425" font-size="18">🐳</text>
+  <text x="290" y="420" text-anchor="middle" font-size="13" font-weight="bold" fill="#9a3412">Docker Hub Registry</text>
+  <text x="290" y="440" text-anchor="middle" font-size="11" fill="#475569">vote:dev · vote:staging · vote:prod · vote:&lt;sha&gt;   |   worker:* · result:*</text>
+  <text x="290" y="453" text-anchor="middle" font-size="10" fill="#64748b">(mismo para worker y result)</text>
+
+  <!-- Trigger boxes in dev repo -->
+  <!-- staging trigger -->
+  <rect x="80" y="490" width="190" height="50" rx="8" fill="#fef9c3" stroke="#eab308" stroke-width="1.5"/>
+  <text x="175" y="509" text-anchor="middle" font-size="11" font-weight="bold" fill="#713f12">trigger-cd-staging</text>
+  <text x="175" y="525" text-anchor="middle" font-size="10" fill="#475569">workflow_dispatch → staging</text>
+  <text x="175" y="537" text-anchor="middle" font-size="9" fill="#64748b">image_tag: staging</text>
+
+  <!-- prod trigger -->
+  <rect x="290" y="490" width="190" height="50" rx="8" fill="#fef9c3" stroke="#eab308" stroke-width="1.5"/>
+  <text x="385" y="509" text-anchor="middle" font-size="11" font-weight="bold" fill="#713f12">trigger-cd (prod)</text>
+  <text x="385" y="525" text-anchor="middle" font-size="10" fill="#475569">workflow_dispatch → prod</text>
+  <text x="385" y="537" text-anchor="middle" font-size="9" fill="#64748b">image_tag: &lt;git-sha&gt;</text>
+
+  <!-- Secrets dev repo -->
+  <rect x="40" y="560" width="500" height="55" rx="8" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="290" y="578" text-anchor="middle" font-size="11" font-weight="bold" fill="#14532d">🔐 GitHub Secrets (Dev Repo)</text>
+  <text x="290" y="595" text-anchor="middle" font-size="10" fill="#475569">DOCKER_USERNAME · DOCKER_PASSWORD · INFRA_DISPATCH_TOKEN</text>
+
+  <!-- ===== OPS REPO BOX ===== -->
+  <rect x="580" y="70" width="500" height="560" rx="12" fill="#f0fdf4" stroke="#86efac" stroke-width="2" filter="url(#sh)"/>
+  <rect x="580" y="70" width="500" height="36" rx="12" fill="#16a34a"/>
+  <rect x="580" y="94" width="500" height="12" fill="#16a34a"/>
+  <text x="830" y="94" text-anchor="middle" font-size="14" font-weight="bold" fill="white">📁 Repositorio de Operaciones</text>
+  <text x="830" y="108" text-anchor="middle" font-size="11" fill="#bbf7d0">microservices-demo-ingesoft-v-ops</text>
+
+  <!-- Trunk label -->
+  <rect x="600" y="122" width="460" height="28" rx="6" fill="#dcfce7"/>
+  <text x="830" y="140" text-anchor="middle" font-size="11" fill="#15803d" font-weight="bold">Trunk-Based Development — única rama: main</text>
+
+  <!-- cd-infra.yml -->
+  <rect x="600" y="165" width="460" height="220" rx="8" fill="white" stroke="#16a34a" stroke-width="1.5" filter="url(#sh)"/>
+  <rect x="600" y="165" width="460" height="28" rx="8" fill="#16a34a"/>
+  <rect x="600" y="181" width="460" height="12" fill="#16a34a"/>
+  <text x="830" y="183" text-anchor="middle" font-size="12" font-weight="bold" fill="white">cd-infra.yml — workflow_dispatch</text>
+
+  <text x="615" y="208" font-size="11" font-weight="bold" fill="#475569">Inputs:</text>
+  <text x="615" y="223" font-size="10" fill="#475569">  image_tag: staging | &lt;git-sha&gt;</text>
+  <text x="615" y="238" font-size="10" fill="#475569">  environment: staging | prod</text>
+
+  <text x="615" y="258" font-size="11" font-weight="bold" fill="#475569">Steps:</text>
+  <text x="615" y="273" font-size="10" fill="#475569">  1. Auth WIF (OIDC → GCP, sin JSON keys)</text>
+  <text x="615" y="288" font-size="10" fill="#475569">  2. Terraform init + validate + apply (GKE cluster)</text>
+  <text x="615" y="303" font-size="10" fill="#475569">  3. gcloud get-credentials (conectar kubectl)</text>
+  <text x="615" y="318" font-size="10" fill="#475569">  4. kubectl apply → PostgreSQL + Kafka</text>
+  <text x="615" y="333" font-size="10" fill="#475569">  5. kubectl apply → Vote + Worker + Result</text>
+  <text x="615" y="348" font-size="10" fill="#475569">  6. kubectl get pods / services (verificación)</text>
+
+  <!-- Gate box -->
+  <rect x="600" y="400" width="460" height="55" rx="8" fill="#fef2f2" stroke="#fca5a5" stroke-width="1.5"/>
+  <text x="830" y="420" text-anchor="middle" font-size="12" font-weight="bold" fill="#991b1b">🛡 Approval Gate (solo prod)</text>
+  <text x="830" y="438" text-anchor="middle" font-size="10" fill="#475569">GitHub Environments → Required reviewers</text>
+  <text x="830" y="451" text-anchor="middle" font-size="10" fill="#64748b">Staging: automático · Prod: requiere aprobación manual</text>
+
+  <!-- GKE box -->
+  <rect x="600" y="470" width="460" height="80" rx="8" fill="#ecfdf5" stroke="#34d399" stroke-width="1.5"/>
+  <text x="830" y="493" text-anchor="middle" font-size="13" font-weight="bold" fill="#065f46">☁ Google Kubernetes Engine</text>
+  <text x="830" y="511" text-anchor="middle" font-size="10" fill="#475569">votes-staging: 2 nodos e2-medium (30GB)</text>
+  <text x="830" y="526" text-anchor="middle" font-size="10" fill="#475569">votes-prod: 3 nodos e2-medium (50GB)</text>
+  <text x="830" y="541" text-anchor="middle" font-size="10" fill="#475569">Estado Terraform → GCS Bucket: ingesoft-v-tfstate</text>
+
+  <!-- Secrets ops repo -->
+  <rect x="600" y="562" width="460" height="55" rx="8" fill="#f0fdf4" stroke="#86efac" stroke-width="1"/>
+  <text x="830" y="580" text-anchor="middle" font-size="11" font-weight="bold" fill="#14532d">🔐 GitHub Secrets (Ops Repo)</text>
+  <text x="830" y="597" text-anchor="middle" font-size="10" fill="#475569">WIF_PROVIDER · WIF_SA · GCP_PROJECT_ID · DOCKER_USERNAME · DB_PASSWORD</text>
+
+  <!-- INTER-REPO ARROWS -->
+  <!-- ci-release → staging trigger → ops -->
+  <path d="M 270 540 Q 270 570 540 580 Q 570 580 580 400" stroke="#f97316" stroke-width="2.5" fill="none" marker-end="url(#arr-orange)" stroke-dasharray="6,3"/>
+  <text x="420" y="575" text-anchor="middle" font-size="10" fill="#f97316" font-weight="bold">workflow_dispatch</text>
+  <text x="420" y="587" text-anchor="middle" font-size="10" fill="#f97316">(staging)</text>
+
+  <!-- ci-main → prod trigger → ops -->
+  <path d="M 385 540 Q 385 645 830 645 Q 1060 645 1060 530" stroke="#10b981" stroke-width="2.5" fill="none" marker-end="url(#arr-green)" stroke-dasharray="6,3"/>
+  <text x="720" y="655" text-anchor="middle" font-size="10" fill="#10b981" font-weight="bold">workflow_dispatch (prod + SHA)</text>
+</svg>

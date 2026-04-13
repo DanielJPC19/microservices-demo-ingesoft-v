@@ -1,13 +1,14 @@
 package main
 
 import (
+	"database/sql"
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
+	"time"
 
-	"database/sql"
-	"fmt"
-
+	"github.com/cenkalti/backoff/v4"
 	_ "github.com/lib/pq"
 
 	kingpin "github.com/alecthomas/kingpin/v2"
@@ -60,8 +61,15 @@ func main() {
 				fmt.Printf("Received message: user %s vote %s\n", string(msg.Key), string(msg.Value))
 
 				insertDynStmt := `insert into "votes"("id", "vote") values($1, $2) on conflict(id) do update set vote = $2`
-				if _, err := db.Exec(insertDynStmt, string(msg.Key), string(msg.Value)); err != nil {
-					log.Println("DB write error:", err)
+				writeOp := func() error {
+					_, err := db.Exec(insertDynStmt, string(msg.Key), string(msg.Value))
+					return err
+				}
+				bo := backoff.WithMaxRetries(backoff.NewConstantBackOff(time.Second), 3)
+				if err := backoff.RetryNotify(writeOp, bo, func(err error, d time.Duration) {
+					log.Printf("DB write failed, retrying in %s: %v", d, err)
+				}); err != nil {
+					log.Println("DB write error after retries:", err)
 				}
 			case <-signals:
 				fmt.Println("Interrupt is detected")
@@ -82,22 +90,46 @@ func openDatabase() *sql.DB {
 
 	psqlconn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 		host, port, user, password, dbname)
-	for {
-		db, err := sql.Open("postgres", psqlconn)
-		if err == nil {
-			return db
-		}
+
+	var db *sql.DB
+	bo := backoff.NewExponentialBackOff()
+	bo.InitialInterval = 500 * time.Millisecond
+	bo.MaxInterval = 30 * time.Second
+
+	err := backoff.RetryNotify(
+		func() error {
+			var openErr error
+			db, openErr = sql.Open("postgres", psqlconn)
+			return openErr
+		},
+		bo,
+		func(err error, d time.Duration) {
+			log.Printf("DB open failed, retrying in %s: %v", d, err)
+		},
+	)
+	if err != nil {
+		log.Panic("Could not open database:", err)
 	}
+	return db
 }
 
 func pingDatabase(db *sql.DB) {
 	fmt.Println("Waiting for postgresql...")
-	for {
-		if err := db.Ping(); err == nil {
-			fmt.Println("Postgresql connected!")
-			return
-		}
+	bo := backoff.NewExponentialBackOff()
+	bo.InitialInterval = 500 * time.Millisecond
+	bo.MaxInterval = 30 * time.Second
+
+	err := backoff.RetryNotify(
+		db.Ping,
+		bo,
+		func(err error, d time.Duration) {
+			log.Printf("DB ping failed, retrying in %s: %v", d, err)
+		},
+	)
+	if err != nil {
+		log.Panic("Could not ping database:", err)
 	}
+	fmt.Println("Postgresql connected!")
 }
 
 func getKafkaMaster() sarama.Consumer {
@@ -105,12 +137,27 @@ func getKafkaMaster() sarama.Consumer {
 	config := sarama.NewConfig()
 	config.Consumer.Return.Errors = true
 	brokers := *brokerList
+
 	fmt.Println("Waiting for kafka...")
-	for {
-		master, err := sarama.NewConsumer(brokers, config)
-		if err == nil {
-			fmt.Println("Kafka connected!")
-			return master
-		}
+	bo := backoff.NewExponentialBackOff()
+	bo.InitialInterval = 500 * time.Millisecond
+	bo.MaxInterval = 30 * time.Second
+
+	var master sarama.Consumer
+	err := backoff.RetryNotify(
+		func() error {
+			var connErr error
+			master, connErr = sarama.NewConsumer(brokers, config)
+			return connErr
+		},
+		bo,
+		func(err error, d time.Duration) {
+			log.Printf("Kafka connection failed, retrying in %s: %v", d, err)
+		},
+	)
+	if err != nil {
+		log.Panic("Could not connect to Kafka:", err)
 	}
+	fmt.Println("Kafka connected!")
+	return master
 }

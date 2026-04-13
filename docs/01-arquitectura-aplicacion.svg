@@ -1,0 +1,174 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 680" width="1000" height="680" font-family="Segoe UI, Arial, sans-serif">
+  <defs>
+    <marker id="arrow" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#475569"/>
+    </marker>
+    <marker id="arrow-blue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#3b82f6"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#10b981"/>
+    </marker>
+    <filter id="shadow">
+      <feDropShadow dx="2" dy="2" stdDeviation="3" flood-opacity="0.15"/>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1000" height="680" fill="#f8fafc" rx="8"/>
+
+  <!-- Title -->
+  <text x="500" y="38" text-anchor="middle" font-size="20" font-weight="bold" fill="#1e293b">Arquitectura de la Aplicación — Voting App</text>
+  <text x="500" y="58" text-anchor="middle" font-size="13" fill="#64748b">Patrón CQRS: Ruta de Escritura (Command) y Ruta de Lectura (Query)</text>
+
+  <!-- GKE Cluster border -->
+  <rect x="30" y="75" width="940" height="490" rx="12" fill="none" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="8,4"/>
+  <rect x="30" y="65" width="185" height="24" rx="4" fill="#e2e8f0"/>
+  <text x="122" y="81" text-anchor="middle" font-size="12" fill="#475569" font-weight="bold">GKE Cluster (GCP)</text>
+
+  <!-- Bulkhead label on GKE border (top-right) -->
+  <rect x="790" y="65" width="178" height="24" rx="4" fill="#fef9c3" stroke="#eab308" stroke-width="1.5"/>
+  <text x="879" y="81" text-anchor="middle" font-size="11" fill="#92400e" font-weight="bold">🧱 Bulkhead: pods aislados</text>
+
+  <!-- ===== WRITE PATH label ===== -->
+  <rect x="45" y="88" width="140" height="22" rx="4" fill="#dbeafe"/>
+  <text x="115" y="103" text-anchor="middle" font-size="11" fill="#1d4ed8" font-weight="bold">⬇ WRITE PATH (Command)</text>
+
+  <!-- ===== READ PATH label ===== -->
+  <rect x="45" y="410" width="140" height="22" rx="4" fill="#dcfce7"/>
+  <text x="115" y="425" text-anchor="middle" font-size="11" fill="#15803d" font-weight="bold">⬆ READ PATH (Query)</text>
+
+  <!-- USER (left) -->
+  <circle cx="72" cy="270" r="28" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2" filter="url(#shadow)"/>
+  <text x="72" y="265" text-anchor="middle" font-size="20">👤</text>
+  <text x="72" y="285" text-anchor="middle" font-size="10" fill="#475569">Usuario</text>
+  <text x="72" y="297" text-anchor="middle" font-size="9" fill="#64748b">Votante</text>
+
+  <!-- USER (right) -->
+  <circle cx="928" cy="270" r="28" fill="#f1f5f9" stroke="#94a3b8" stroke-width="2" filter="url(#shadow)"/>
+  <text x="928" y="265" text-anchor="middle" font-size="20">👤</text>
+  <text x="928" y="285" text-anchor="middle" font-size="10" fill="#475569">Usuario</text>
+  <text x="928" y="297" text-anchor="middle" font-size="9" fill="#64748b">Resultados</text>
+
+  <!-- VOTE SERVICE (height extended to 115) -->
+  <rect x="145" y="190" width="160" height="115" rx="10" fill="#dbeafe" stroke="#3b82f6" stroke-width="2" filter="url(#shadow)"/>
+  <text x="225" y="218" text-anchor="middle" font-size="22">☕</text>
+  <text x="225" y="238" text-anchor="middle" font-size="13" font-weight="bold" fill="#1e40af">Vote Service</text>
+  <text x="225" y="254" text-anchor="middle" font-size="11" fill="#3b82f6">Java / Spring Boot</text>
+  <text x="225" y="270" text-anchor="middle" font-size="10" fill="#475569">Port: 8080</text>
+  <text x="225" y="283" text-anchor="middle" font-size="10" fill="#475569">LoadBalancer</text>
+  <!-- Rate Limiter badge -->
+  <rect x="160" y="292" width="130" height="18" rx="9" fill="#fff7ed" stroke="#ea580c" stroke-width="1.5"/>
+  <text x="225" y="304" text-anchor="middle" font-size="9" fill="#ea580c" font-weight="bold">⚡ Rate Limiter (5 req/s)</text>
+
+  <!-- KAFKA (height extended to 115) -->
+  <rect x="375" y="190" width="160" height="115" rx="10" fill="#fef3c7" stroke="#f59e0b" stroke-width="2" filter="url(#shadow)"/>
+  <text x="455" y="218" text-anchor="middle" font-size="22">📨</text>
+  <text x="455" y="238" text-anchor="middle" font-size="13" font-weight="bold" fill="#92400e">Kafka</text>
+  <text x="455" y="254" text-anchor="middle" font-size="11" fill="#d97706">apache/kafka:3.7.0</text>
+  <text x="455" y="270" text-anchor="middle" font-size="10" fill="#475569">Topic: "votes"</text>
+  <text x="455" y="283" text-anchor="middle" font-size="10" fill="#475569">Port: 9092 (KRaft)</text>
+  <!-- Circuit Breaker badge -->
+  <rect x="385" y="292" width="140" height="18" rx="9" fill="#fef2f2" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="455" y="304" text-anchor="middle" font-size="9" fill="#dc2626" font-weight="bold">🔌 Circuit Breaker (buffer)</text>
+
+  <!-- WORKER SERVICE (height extended to 115) -->
+  <rect x="605" y="190" width="160" height="115" rx="10" fill="#e0f2fe" stroke="#0ea5e9" stroke-width="2" filter="url(#shadow)"/>
+  <text x="685" y="218" text-anchor="middle" font-size="22">⚙️</text>
+  <text x="685" y="238" text-anchor="middle" font-size="13" font-weight="bold" fill="#0c4a6e">Worker Service</text>
+  <text x="685" y="254" text-anchor="middle" font-size="11" fill="#0ea5e9">Go 1.24</text>
+  <text x="685" y="270" text-anchor="middle" font-size="10" fill="#475569">Kafka Consumer</text>
+  <text x="685" y="283" text-anchor="middle" font-size="10" fill="#475569">No external port</text>
+  <!-- Retry badge -->
+  <rect x="615" y="292" width="140" height="18" rx="9" fill="#eff6ff" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="685" y="304" text-anchor="middle" font-size="9" fill="#2563eb" font-weight="bold">🔄 Retry + Backoff (exp.)</text>
+
+  <!-- POSTGRESQL -->
+  <rect x="490" y="395" width="160" height="100" rx="10" fill="#f0fdf4" stroke="#22c55e" stroke-width="2" filter="url(#shadow)"/>
+  <text x="570" y="423" text-anchor="middle" font-size="22">🐘</text>
+  <text x="570" y="443" text-anchor="middle" font-size="13" font-weight="bold" fill="#14532d">PostgreSQL</text>
+  <text x="570" y="459" text-anchor="middle" font-size="11" fill="#22c55e">postgres:16</text>
+  <text x="570" y="475" text-anchor="middle" font-size="10" fill="#475569">Table: votes</text>
+  <text x="570" y="488" text-anchor="middle" font-size="10" fill="#475569">Port: 5432</text>
+
+  <!-- RESULT SERVICE -->
+  <rect x="720" y="395" width="160" height="100" rx="10" fill="#fdf4ff" stroke="#a855f7" stroke-width="2" filter="url(#shadow)"/>
+  <text x="800" y="423" text-anchor="middle" font-size="22">📊</text>
+  <text x="800" y="443" text-anchor="middle" font-size="13" font-weight="bold" fill="#581c87">Result Service</text>
+  <text x="800" y="459" text-anchor="middle" font-size="11" fill="#a855f7">Node.js 22</text>
+  <text x="800" y="475" text-anchor="middle" font-size="10" fill="#475569">Port: 80 (Socket.io)</text>
+  <text x="800" y="488" text-anchor="middle" font-size="10" fill="#475569">LoadBalancer</text>
+
+  <!-- ARROWS — WRITE PATH (blue, top) -->
+  <!-- User → Vote -->
+  <line x1="100" y1="255" x2="142" y2="245" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrow-blue)"/>
+  <text x="120" y="245" text-anchor="middle" font-size="9" fill="#3b82f6">HTTP POST</text>
+  <text x="120" y="256" text-anchor="middle" font-size="9" fill="#3b82f6">/vote</text>
+
+  <!-- Vote → Kafka -->
+  <line x1="305" y1="247" x2="373" y2="247" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrow-blue)"/>
+  <text x="339" y="239" text-anchor="middle" font-size="9" fill="#3b82f6">Kafka msg</text>
+  <text x="339" y="250" text-anchor="middle" font-size="9" fill="#3b82f6">voter_id + vote</text>
+
+  <!-- Kafka → Worker -->
+  <line x1="535" y1="247" x2="603" y2="247" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrow-blue)"/>
+  <text x="569" y="239" text-anchor="middle" font-size="9" fill="#3b82f6">Consume</text>
+  <text x="569" y="250" text-anchor="middle" font-size="9" fill="#3b82f6">partition 0</text>
+
+  <!-- Worker → PostgreSQL (y1 adjusted to 305 = bottom of extended box) -->
+  <line x1="685" y1="305" x2="620" y2="393" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrow-blue)"/>
+  <text x="668" y="348" text-anchor="middle" font-size="9" fill="#3b82f6">INSERT</text>
+  <text x="668" y="359" text-anchor="middle" font-size="9" fill="#3b82f6">ON CONFLICT</text>
+  <text x="668" y="370" text-anchor="middle" font-size="9" fill="#3b82f6">DO UPDATE</text>
+
+  <!-- ARROWS — READ PATH (green, bottom) -->
+  <!-- PostgreSQL → Result -->
+  <line x1="652" y1="445" x2="718" y2="445" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-green)"/>
+  <text x="685" y="437" text-anchor="middle" font-size="9" fill="#10b981">SELECT COUNT</text>
+  <text x="685" y="447" text-anchor="middle" font-size="9" fill="#10b981">polling 1s</text>
+
+  <!-- Result → User -->
+  <line x1="880" y1="445" x2="920" y2="308" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-green)"/>
+  <text x="912" y="390" text-anchor="middle" font-size="9" fill="#10b981">Socket.io</text>
+  <text x="912" y="401" text-anchor="middle" font-size="9" fill="#10b981">live results</text>
+
+  <!-- DB Secret box -->
+  <rect x="340" y="413" width="120" height="64" rx="8" fill="#fff7ed" stroke="#fb923c" stroke-width="1.5" stroke-dasharray="5,3"/>
+  <text x="400" y="433" text-anchor="middle" font-size="11" font-weight="bold" fill="#9a3412">🔐 db-secret</text>
+  <text x="400" y="448" text-anchor="middle" font-size="9" fill="#475569">Kubernetes Secret</text>
+  <text x="400" y="461" text-anchor="middle" font-size="9" fill="#475569">password → env</text>
+  <text x="400" y="474" text-anchor="middle" font-size="9" fill="#475569">worker + result</text>
+
+  <!-- Legend row 1 -->
+  <rect x="45" y="578" width="910" height="85" rx="8" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="1"/>
+  <text x="500" y="596" text-anchor="middle" font-size="10" font-weight="bold" fill="#475569">Leyenda</text>
+
+  <!-- Row 1: flow arrows and service types -->
+  <line x1="65" y1="610" x2="95" y2="610" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrow-blue)"/>
+  <text x="100" y="614" font-size="10" fill="#475569">Write path (Command)</text>
+  <line x1="255" y1="610" x2="285" y2="610" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-green)"/>
+  <text x="290" y="614" font-size="10" fill="#475569">Read path (Query)</text>
+  <rect x="440" y="604" width="11" height="11" rx="2" fill="#dbeafe" stroke="#3b82f6" stroke-width="1"/>
+  <text x="456" y="614" font-size="10" fill="#475569">Servicio escritura</text>
+  <rect x="565" y="604" width="11" height="11" rx="2" fill="#f0fdf4" stroke="#22c55e" stroke-width="1"/>
+  <text x="581" y="614" font-size="10" fill="#475569">Base de datos</text>
+  <rect x="670" y="604" width="11" height="11" rx="2" fill="#fdf4ff" stroke="#a855f7" stroke-width="1"/>
+  <text x="686" y="614" font-size="10" fill="#475569">Servicio lectura</text>
+
+  <!-- Row 2: cloud patterns -->
+  <rect x="65" y="626" width="60" height="14" rx="7" fill="#fff7ed" stroke="#ea580c" stroke-width="1"/>
+  <text x="95" y="636" text-anchor="middle" font-size="9" fill="#ea580c" font-weight="bold">⚡ Rate Limiter</text>
+  <text x="133" y="637" font-size="9" fill="#64748b">5 req/s en Vote</text>
+
+  <rect x="235" y="626" width="72" height="14" rx="7" fill="#eff6ff" stroke="#2563eb" stroke-width="1"/>
+  <text x="271" y="636" text-anchor="middle" font-size="9" fill="#2563eb" font-weight="bold">🔄 Retry+Backoff</text>
+  <text x="315" y="637" font-size="9" fill="#64748b">exp. en Worker</text>
+
+  <rect x="415" y="626" width="75" height="14" rx="7" fill="#fef2f2" stroke="#dc2626" stroke-width="1"/>
+  <text x="452" y="636" text-anchor="middle" font-size="9" fill="#dc2626" font-weight="bold">🔌 Circuit Breaker</text>
+  <text x="498" y="637" font-size="9" fill="#64748b">Kafka como buffer</text>
+
+  <rect x="595" y="626" width="56" height="14" rx="7" fill="#fef9c3" stroke="#eab308" stroke-width="1"/>
+  <text x="623" y="636" text-anchor="middle" font-size="9" fill="#92400e" font-weight="bold">🧱 Bulkhead</text>
+  <text x="658" y="637" font-size="9" fill="#64748b">pods aislados en GKE</text>
+</svg>
